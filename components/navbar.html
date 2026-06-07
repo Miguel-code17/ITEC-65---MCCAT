@@ -1,0 +1,69 @@
+<!-- ============================================================
+     MCCAT - Navbar Component (navbar.html)
+     Usage: Include via JS fetch() or copy-paste into each page
+     NOTE: For PHP integration, replace with <?php include 'components/navbar.php'; ?>
+     ============================================================ -->
+
+<nav id="navbar">
+  <div class="navbar-container">
+
+    <!-- Logo -->
+    <a href="index.html" class="navbar-logo">
+      <div class="logo-icon">🐱</div>
+      <span class="logo-text">MC<span>CAT</span></span>
+    </a>
+
+    <!-- Navigation Menu -->
+    <ul class="navbar-menu" id="navbarMenu">
+      <li class="nav-item">
+        <a href="index.html" class="nav-link" data-page="index">
+          <span class="nav-icon">🏠</span> Home
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="menu.html" class="nav-link" data-page="menu">
+          <span class="nav-icon">🍔</span> Menu
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="order.html" class="nav-link" data-page="order">
+          <span class="nav-icon">🛒</span> Order
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="about.html" class="nav-link" data-page="about">
+          <span class="nav-icon">ℹ️</span> About
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="contact.html" class="nav-link" data-page="contact">
+          <span class="nav-icon">📞</span> Contact
+        </a>
+      </li>
+
+      <!-- Mobile-only divider & actions -->
+      <div class="nav-divider"></div>
+      <div class="mobile-nav-actions">
+        <a href="login.html" class="btn btn-secondary">Login</a>
+        <a href="order.html" class="btn btn-primary">Order Now 🛒</a>
+      </div>
+    </ul>
+
+    <!-- Desktop Actions -->
+    <div class="navbar-actions">
+      <a href="login.html" class="btn-login">Login</a>
+      <a href="order.html" class="btn-order-now">Order Now 🛒</a>
+    </div>
+
+    <!-- Hamburger Button -->
+    <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+
+  </div>
+</nav>
+
+<!-- Mobile Menu Overlay -->
+<div class="mobile-overlay" id="mobileOverlay"></div>

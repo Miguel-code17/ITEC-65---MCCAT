@@ -1,0 +1,208 @@
+/* ============================================================
+   MCCAT - Animations (animations.css) — Simplified
+   Non-essential animations removed. Kept: scroll-reveal,
+   skeleton shimmer, and spinner (required by JS & loading UI).
+   ============================================================ */
+
+/* ============================================================
+   KEYFRAME DEFINITIONS
+   Only spin and shimmer are kept — required by functional UI.
+   ============================================================ */
+
+@keyframes shimmer {
+  0%   { background-position: -1000px 0; }
+  100% { background-position:  1000px 0; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================================
+   SCROLL REVEAL (class added by JS)
+   Simplified: fade + translate only, no scale variants.
+   ============================================================ */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+.reveal-scale {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.reveal-scale.visible { opacity: 1; }
+
+/* Stagger children */
+.stagger > *:nth-child(1) { transition-delay: 0.05s; }
+.stagger > *:nth-child(2) { transition-delay: 0.10s; }
+.stagger > *:nth-child(3) { transition-delay: 0.15s; }
+.stagger > *:nth-child(4) { transition-delay: 0.20s; }
+.stagger > *:nth-child(5) { transition-delay: 0.25s; }
+.stagger > *:nth-child(6) { transition-delay: 0.30s; }
+.stagger > *:nth-child(7) { transition-delay: 0.35s; }
+.stagger > *:nth-child(8) { transition-delay: 0.40s; }
+
+/* ============================================================
+   SKELETON LOADING
+   Shimmer kept — it's a functional loading state indicator.
+   ============================================================ */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--gray-100) 25%,
+    var(--gray-200) 50%,
+    var(--gray-100) 75%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-card {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--gray-100);
+}
+
+.skeleton-img   { width: 100%; height: 200px; }
+.skeleton-title { height: 20px; margin: 1rem 1rem 0.5rem; width: 70%; }
+.skeleton-text  { height: 14px; margin: 0.4rem 1rem; }
+
+.skeleton-text.short  { width: 40%; }
+.skeleton-text.medium { width: 70%; }
+.skeleton-text.long   { width: 90%; }
+
+.skeleton-btn {
+  height: 38px;
+  margin: 1rem;
+  width: calc(100% - 2rem);
+  border-radius: var(--radius-full) !important;
+}
+
+/* ============================================================
+   PAGE TRANSITION — minimal fade only
+   ============================================================ */
+
+.page-transition {
+  animation: none;
+  opacity: 1;
+}
+
+/* ============================================================
+   UTILITY ANIMATION CLASSES
+   Kept as no-ops so existing class references in HTML don't break.
+   All visual motion stripped out.
+   ============================================================ */
+
+.animate-fadeIn,
+.animate-fadeInUp,
+.animate-fadeInDown,
+.animate-fadeInLeft,
+.animate-fadeInRight,
+.animate-scaleIn,
+.animate-bounceIn {
+  opacity: 1;
+  transform: none;
+}
+
+.animate-float,
+.animate-floatSlow,
+.animate-pulse,
+.animate-wiggle {
+  animation: none;
+}
+
+/* Delay utilities — kept so JS-driven stagger still works */
+.delay-100  { animation-delay: 0.1s; }
+.delay-200  { animation-delay: 0.2s; }
+.delay-300  { animation-delay: 0.3s; }
+.delay-400  { animation-delay: 0.4s; }
+.delay-500  { animation-delay: 0.5s; }
+.delay-600  { animation-delay: 0.6s; }
+.delay-700  { animation-delay: 0.7s; }
+.delay-800  { animation-delay: 0.8s; }
+.delay-900  { animation-delay: 0.9s; }
+.delay-1000 { animation-delay: 1s; }
+
+/* ============================================================
+   HOVER EFFECTS — simplified to color/border only, no motion
+   ============================================================ */
+
+.hover-lift,
+.hover-grow { transition: box-shadow 0.2s ease; }
+.hover-lift:hover,
+.hover-grow:hover { box-shadow: var(--shadow-lg); }
+
+.hover-glow:hover { box-shadow: 0 0 16px rgba(26, 122, 60, 0.3); }
+
+/* Shine stripped — .hover-shine is now a no-op */
+.hover-shine { position: relative; overflow: hidden; }
+
+/* ============================================================
+   COUNTER / GRADIENT TEXT — stripped to plain styles
+   ============================================================ */
+
+.counter-value { display: inline-block; }
+
+.gradient-text { color: var(--primary); }
+
+/* ============================================================
+   FLOATING FOOD — hidden (decorative only)
+   ============================================================ */
+
+.floating-food { display: none; }
+
+/* ============================================================
+   BUTTON RIPPLE — stripped
+   ============================================================ */
+
+.btn-ripple { position: relative; overflow: hidden; }
+.btn-ripple .ripple-effect { display: none; }
+
+/* ============================================================
+   BADGE PULSE — stripped
+   ============================================================ */
+
+.badge-pulse::before { display: none; }
+
+/* ============================================================
+   REDUCE MOTION (Accessibility)
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal,
+  .reveal-left,
+  .reveal-right,
+  .reveal-scale {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

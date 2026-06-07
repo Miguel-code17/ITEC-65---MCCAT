@@ -1,0 +1,300 @@
+/* ============================================================
+   MCCAT - Navbar Styles (navbar.css) — Simplified
+   ============================================================ */
+
+/* --- Navbar Base --- */
+#navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(26, 122, 60, 0.1);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+#navbar.scrolled {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+  border-bottom-color: rgba(26, 122, 60, 0.15);
+}
+
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 70px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* --- Logo --- */
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  z-index: 1001;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: white;
+  font-weight: 900;
+  box-shadow: 0 4px 12px rgba(26, 122, 60, 0.25);
+}
+
+.logo-text {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: 0.02em;
+}
+
+.logo-text span { color: var(--accent); }
+
+/* --- Nav Menu --- */
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  list-style: none;
+}
+
+.nav-item { position: relative; }
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--gray-700);
+  border-radius: var(--radius-full);
+  transition: color 0.2s ease, background 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: var(--primary);
+  background: var(--primary-pale);
+}
+
+.nav-link.active {
+  color: var(--primary);
+  background: var(--primary-pale);
+  font-weight: 600;
+}
+
+.nav-link .nav-icon { font-size: 0.95rem; }
+
+/* Active indicator underline */
+.nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 20px;
+  height: 3px;
+  background: var(--primary);
+  border-radius: var(--radius-full);
+  transition: transform 0.2s ease;
+}
+
+.nav-item:has(.nav-link.active)::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* --- Navbar Actions --- */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.btn-login {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--primary);
+  background: transparent;
+  border: 2px solid var(--primary);
+  border-radius: var(--radius-full);
+  transition: background 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-login:hover { background: var(--primary-pale); }
+
+.btn-order-now {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--white);
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-radius: var(--radius-full);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 4px 14px rgba(26, 122, 60, 0.25);
+}
+
+.btn-order-now:hover {
+  box-shadow: 0 6px 20px rgba(26, 122, 60, 0.35);
+}
+
+/* --- Mobile Hamburger --- */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: var(--radius-md);
+  transition: background 0.2s ease;
+  z-index: 1001;
+  border: none;
+  background: transparent;
+}
+
+.hamburger:hover { background: var(--primary-pale); }
+
+.hamburger-line {
+  width: 100%;
+  height: 2.5px;
+  background: var(--gray-700);
+  border-radius: 3px;
+  transition: transform 0.25s ease, opacity 0.25s ease, background 0.2s ease;
+  transform-origin: center;
+}
+
+.hamburger.open .hamburger-line:nth-child(1) {
+  transform: translateY(7.5px) rotate(45deg);
+  background: var(--primary);
+}
+.hamburger.open .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.open .hamburger-line:nth-child(3) {
+  transform: translateY(-7.5px) rotate(-45deg);
+  background: var(--primary);
+}
+
+/* --- Mobile Overlay --- */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 998;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.mobile-overlay.active {
+  display: block;
+  opacity: 1;
+}
+
+/* ============================================================
+   RESPONSIVE NAVBAR
+   ============================================================ */
+@media (max-width: 900px) {
+  .hamburger { display: flex; }
+
+  .navbar-menu {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 280px;
+    height: 100vh;
+    background: var(--white);
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 5.5rem 1.5rem 2rem;
+    gap: 0.25rem;
+    z-index: 999;
+    transition: right 0.25s ease;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+  }
+
+  .navbar-menu.mobile-open { right: 0; }
+
+  .nav-item { width: 100%; }
+  .nav-item::after { display: none; }
+
+  .nav-link {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    font-size: 1rem;
+    border-radius: var(--radius-md);
+    gap: 0.75rem;
+  }
+
+  .nav-link .nav-icon {
+    font-size: 1.1rem;
+    width: 24px;
+    text-align: center;
+  }
+
+  .nav-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--gray-100);
+    margin: 0.75rem 0;
+  }
+
+  .navbar-actions { display: none; }
+
+  .mobile-nav-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    padding-top: 1rem;
+    border-top: 1px solid var(--gray-100);
+    margin-top: 0.5rem;
+  }
+
+  .mobile-nav-actions .btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.85rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media (min-width: 901px) {
+  .mobile-nav-actions { display: none; }
+  .nav-divider        { display: none; }
+}
+
+/* --- Page offset for fixed navbar --- */
+.navbar-spacer { height: 70px; }

@@ -1,0 +1,87 @@
+<!-- ============================================================
+     MCCAT - Footer Component (footer.html)
+     NOTE: For PHP integration, replace with <?php include 'components/footer.php'; ?>
+     ============================================================ -->
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+
+      <!-- Brand Column -->
+      <div class="footer-brand">
+        <div class="d-flex align-center gap-1 mb-2">
+          <div class="logo-icon" style="width:42px;height:42px;background:linear-gradient(135deg,#1a7a3c,#27ae60);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;">🐱</div>
+          <span class="logo-text" style="font-size:1.8rem;">MCCAT</span>
+        </div>
+        <p>Your favorite online food ordering destination. Fresh, fast, and absolutely delicious — delivered right to your doorstep.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn" aria-label="Facebook">📘</a>
+          <a href="#" class="social-btn" aria-label="Instagram">📸</a>
+          <a href="#" class="social-btn" aria-label="Twitter">🐦</a>
+          <a href="#" class="social-btn" aria-label="TikTok">🎵</a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">🏠 Home</a></li>
+          <li><a href="menu.html">🍔 Our Menu</a></li>
+          <li><a href="order.html">🛒 Order Now</a></li>
+          <li><a href="about.html">ℹ️ About Us</a></li>
+          <li><a href="contact.html">📞 Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Categories -->
+      <div class="footer-col">
+        <h4>Categories</h4>
+        <ul>
+          <li><a href="menu.html?cat=burgers">🍔 Burgers</a></li>
+          <li><a href="menu.html?cat=chicken">🍗 Chicken</a></li>
+          <li><a href="menu.html?cat=sides">🍟 Sides</a></li>
+          <li><a href="menu.html?cat=drinks">🥤 Drinks</a></li>
+          <li><a href="menu.html?cat=desserts">🍦 Desserts</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="footer-col">
+        <h4>Contact Us</h4>
+        <div class="footer-contact-item">
+          <span class="icon">📍</span>
+          <p>123 MCCAT Street, Imus, Cavite, Philippines</p>
+        </div>
+        <div class="footer-contact-item">
+          <span class="icon">📞</span>
+          <p>(046) 123-4567<br>+63 912 345 6789</p>
+        </div>
+        <div class="footer-contact-item">
+          <span class="icon">📧</span>
+          <p>hello@mccat.com<br>support@mccat.com</p>
+        </div>
+        <div class="footer-contact-item">
+          <span class="icon">🕐</span>
+          <p>Mon - Sun: 10:00 AM – 10:00 PM</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+      <p>© <span id="footerYear">2024</span> MCCAT Food. All rights reserved.</p>
+      <div class="d-flex gap-2">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Update footer year dynamically
+  document.getElementById('footerYear').textContent = new Date().getFullYear();
+</script>

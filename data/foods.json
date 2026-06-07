@@ -1,0 +1,211 @@
+{
+  "categories": [
+    {
+      "id": "burgers",
+      "name": "Burgers",
+      "icon": "🍔"
+    },
+    {
+      "id": "chicken",
+      "name": "Chicken",
+      "icon": "🍗"
+    },
+    {
+      "id": "sides",
+      "name": "Sides",
+      "icon": "🍟"
+    },
+    {
+      "id": "drinks",
+      "name": "Drinks",
+      "icon": "🥤"
+    },
+    {
+      "id": "desserts",
+      "name": "Desserts",
+      "icon": "🍦"
+    }
+  ],
+  "foods": [
+    {
+      "id": 1,
+      "name": "Classic McCAT Burger",
+      "category": "burgers",
+      "description": "Two all-beef patties with special sauce, lettuce, cheese, pickles, and onions on a sesame seed bun.",
+      "price": 189.00,
+      "image": "images/burger1.svg",
+      "popular": true,
+      "featured": true,
+      "rating": 4.8,
+      "reviews": 1240
+    },
+    {
+      "id": 2,
+      "name": "Spicy Fiesta Burger",
+      "category": "burgers",
+      "description": "Crispy beef patty loaded with jalapeños, fiery sauce, cheddar cheese, and fresh tomatoes.",
+      "price": 199.00,
+      "image": "images/burger2.svg",
+      "popular": true,
+      "featured": false,
+      "rating": 4.6,
+      "reviews": 890
+    },
+    {
+      "id": 3,
+      "name": "Double Stack Deluxe",
+      "category": "burgers",
+      "description": "Double stacked beef patties with bacon, mushroom, Swiss cheese and garlic aioli.",
+      "price": 229.00,
+      "image": "images/burger3.svg",
+      "popular": false,
+      "featured": true,
+      "rating": 4.7,
+      "reviews": 670
+    },
+    {
+      "id": 4,
+      "name": "Mushroom Swiss Burger",
+      "category": "burgers",
+      "description": "Juicy beef patty topped with sautéed mushrooms, Swiss cheese, and creamy garlic sauce.",
+      "price": 209.00,
+      "image": "images/burger4.svg",
+      "popular": false,
+      "featured": false,
+      "rating": 4.5,
+      "reviews": 420
+    },
+    {
+      "id": 5,
+      "name": "Crispy Chicken Sandwich",
+      "category": "chicken",
+      "description": "Golden crispy chicken fillet with lettuce, tomato, and our signature mayo on a toasted bun.",
+      "price": 179.00,
+      "image": "images/chicken1.svg",
+      "popular": true,
+      "featured": true,
+      "rating": 4.7,
+      "reviews": 980
+    },
+    {
+      "id": 6,
+      "name": "Spicy Chicken Wings (6pcs)",
+      "category": "chicken",
+      "description": "Six pieces of crispy wings tossed in our signature spicy buffalo sauce. Served with dip.",
+      "price": 199.00,
+      "image": "images/chicken2.svg",
+      "popular": true,
+      "featured": false,
+      "rating": 4.9,
+      "reviews": 1560
+    },
+    {
+      "id": 7,
+      "name": "Grilled Chicken Platter",
+      "category": "chicken",
+      "description": "Tender grilled chicken breast with herbs and spices. Served with rice and salad.",
+      "price": 219.00,
+      "image": "images/chicken3.svg",
+      "popular": false,
+      "featured": false,
+      "rating": 4.4,
+      "reviews": 310
+    },
+    {
+      "id": 8,
+      "name": "Large Fries",
+      "category": "sides",
+      "description": "Golden crispy fries seasoned with sea salt. Large serving for big appetites.",
+      "price": 79.00,
+      "image": "images/fries1.svg",
+      "popular": true,
+      "featured": false,
+      "rating": 4.6,
+      "reviews": 2100
+    },
+    {
+      "id": 9,
+      "name": "Onion Rings (8pcs)",
+      "category": "sides",
+      "description": "Crunchy beer-battered onion rings served with smoky BBQ dipping sauce.",
+      "price": 89.00,
+      "image": "images/sides1.svg",
+      "popular": false,
+      "featured": false,
+      "rating": 4.3,
+      "reviews": 540
+    },
+    {
+      "id": 10,
+      "name": "Coleslaw",
+      "category": "sides",
+      "description": "Creamy homestyle coleslaw made fresh daily with crisp cabbage and carrots.",
+      "price": 59.00,
+      "image": "images/sides2.svg",
+      "popular": false,
+      "featured": false,
+      "rating": 4.2,
+      "reviews": 280
+    },
+    {
+      "id": 11,
+      "name": "Classic Cola",
+      "category": "drinks",
+      "description": "Ice-cold refreshing cola served with crushed ice. Available in regular and zero sugar.",
+      "price": 49.00,
+      "image": "images/drink1.svg",
+      "popular": true,
+      "featured": false,
+      "rating": 4.5,
+      "reviews": 1800
+    },
+    {
+      "id": 12,
+      "name": "Fresh Lemonade",
+      "category": "drinks",
+      "description": "Freshly squeezed lemonade with a hint of mint. Perfectly sweet and tangy.",
+      "price": 69.00,
+      "image": "images/drink2.svg",
+      "popular": false,
+      "featured": true,
+      "rating": 4.7,
+      "reviews": 720
+    },
+    {
+      "id": 13,
+      "name": "Chocolate Milkshake",
+      "category": "drinks",
+      "description": "Thick and creamy chocolate milkshake topped with whipped cream and chocolate drizzle.",
+      "price": 99.00,
+      "image": "images/drink3.svg",
+      "popular": true,
+      "featured": false,
+      "rating": 4.8,
+      "reviews": 1100
+    },
+    {
+      "id": 14,
+      "name": "McCAT Sundae",
+      "category": "desserts",
+      "description": "Classic vanilla soft serve topped with hot fudge sauce and rainbow sprinkles.",
+      "price": 79.00,
+      "image": "images/dessert1.svg",
+      "popular": true,
+      "featured": false,
+      "rating": 4.9,
+      "reviews": 1450
+    },
+    {
+      "id": 15,
+      "name": "Apple Pie",
+      "category": "desserts",
+      "description": "Warm flaky pastry filled with cinnamon-spiced apple filling. Baked fresh every hour.",
+      "price": 59.00,
+      "image": "images/dessert2.svg",
+      "popular": false,
+      "featured": false,
+      "rating": 4.5,
+      "reviews": 630
+    }
+  ]
+}

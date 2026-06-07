@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us — MCCAT</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+
+  <style>
+    /* ── ABOUT PAGE ───────────────────────────────────── */
+    .story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    .story-visual {
+      background: var(--primary-pale);
+      border-radius: var(--radius-xl);
+      padding: 3rem;
+      text-align: center;
+      font-size: 8rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .story-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(26,122,60,0.06), transparent);
+    }
+    .story-visual .year-badge {
+      position: absolute;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 0.4rem 0.9rem;
+      border-radius: var(--radius-full);
+    }
+
+    /* MVV Cards */
+    .mvv-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.75rem;
+    }
+    .mvv-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 1.75rem;
+      box-shadow: var(--shadow-md);
+      border-top: 4px solid var(--primary);
+      transition: var(--transition);
+      text-align: center;
+    }
+    .mvv-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+    .mvv-icon {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .mvv-card h3 { color: var(--primary); margin-bottom: 0.75rem; }
+    .mvv-card p  { font-size: 0.92rem; line-height: 1.8; }
+
+    /* Values */
+    .values-section { background: var(--gray-50,#f9fafb); }
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+    .value-item {
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+      padding: 1.5rem;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .value-item:hover { transform: translateX(5px); box-shadow: var(--shadow-md); }
+    .value-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      background: var(--primary-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .value-item h4 { margin-bottom: 0.35rem; font-size: 1rem; }
+    .value-item p  { font-size: 0.88rem; color: var(--gray-500); margin: 0; }
+
+    /* Team */
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+    .team-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2rem 1.25rem;
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+      border: 1px solid var(--gray-100);
+    }
+    .team-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .team-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--primary-pale);
+      border: 3px solid var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      margin: 0 auto 1rem;
+    }
+    .team-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem; }
+    .team-role { font-size: 0.82rem; color: var(--primary); font-weight: 600; margin-bottom: 0.5rem; }
+    .team-desc { font-size: 0.83rem; color: var(--gray-500); }
+
+    /* Stats */
+    .stats-section {
+      background: linear-gradient(135deg, #0d4f25, var(--primary));
+      padding: 4rem 0;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #fff;
+      display: block;
+      font-family: var(--font-display);
+    }
+    .stat-label {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.88rem;
+      margin-top: 0.35rem;
+    }
+
+    @media (max-width: 900px) {
+      .story-grid { grid-template-columns: 1fr; }
+      .mvv-grid    { grid-template-columns: 1fr; }
+      .team-grid   { grid-template-columns: repeat(2,1fr); }
+      .stats-grid  { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 600px) {
+      .values-grid { grid-template-columns: 1fr; }
+      .team-grid   { grid-template-columns: 1fr; }
+      .stats-grid  { grid-template-columns: repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="navbarPlaceholder"></div>
+
+  <!-- Hero -->
+  <div class="page-hero">
+    <div class="container">
+      <h1 class="animate-fadeInDown">About MCCAT</h1>
+      <p class="animate-fadeInUp delay-100">Our story, mission, and the people behind your favorite meals.</p>
+      <div class="breadcrumb">
+        <a href="index.html">Home</a> <span>›</span> <span>About</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ╔══════════════════════════════════════════════════════╗
+       ║  OUR STORY                                           ║
+       ╚══════════════════════════════════════════════════════╝ -->
+  <section class="section">
+    <div class="container">
+      <div class="story-grid">
+
+        <div class="story-visual reveal-left animate-float">
+          🐱
+          <div class="year-badge">Est. 2020</div>
+        </div>
+
+        <div class="reveal-right">
+          <span class="tag">📖 Our Story</span>
+          <h2 style="margin-top:0.75rem;">Born From a Love of Great Food</h2>
+          <div class="divider" style="margin:1rem 0;"></div>
+          <p>
+            MCCAT started in 2020 as a small family kitchen in Imus, Cavite. What began as a weekend 
+            passion project — serving burgers and fried chicken to neighbors — quickly grew into 
+            something bigger. 
+          </p>
+          <p style="margin-top:1rem;">
+            Our founder, inspired by the simple joy that a great burger brings, wanted to create 
+            a brand that felt personal, fast, and genuinely delicious. The name "MCCAT" 
+            represents the playful spirit of our brand — bold, friendly, and a little bit cheeky.
+          </p>
+          <p style="margin-top:1rem;">
+            Today, we serve thousands of happy customers across Cavite every month. Every patty 
+            is hand-pressed, every sauce is house-made, and every order is prepared with the same 
+            love as that very first weekend kitchen.
+          </p>
+          <div style="display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap;">
+            <a href="menu.html" class="btn btn-primary">View Our Menu 🍔</a>
+            <a href="contact.html" class="btn btn-secondary">Get in Touch →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ╔══════════════════════════════════════════════════════╗
+       ║  STATS                                               ║
+       ╚══════════════════════════════════════════════════════╝ -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid stagger">
+        <div class="reveal">
+          <span class="stat-value counter" data-target="5000" data-suffix="+">0</span>
+          <p class="stat-label">Happy Customers</p>
+        </div>
+        <div class="reveal delay-100">
+          <span class="stat-value counter" data-target="50" data-suffix="+">0</span>
+          <p class="stat-label">Menu Items</p>
+        </div>
+        <div class="reveal delay-200">
+          <span class="stat-value counter" data-target="4" data-suffix=" yrs">0</span>
+          <p class="stat-label">Years of Service</p>
+        </div>
+        <div class="reveal delay-300">
+          <span class="stat-value">4.9</span>
+          <p class="stat-label">Average Rating ⭐</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ╔══════════════════════════════════════════════════════╗
+       ║  MISSION · VISION · VALUES                           ║
+       ╚══════════════════════════════════════════════════════╝ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="tag">🎯 What Drives Us</span>
+        <h2>Mission, Vision & Promise</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="mvv-grid stagger">
+        <div class="mvv-card reveal">
+          <span class="mvv-icon">🎯</span>
+          <h3>Our Mission</h3>
+          <p>
+            To make quality, delicious food accessible and affordable for every Filipino family. 
+            We believe great food shouldn't break the bank, and that every bite should feel special.
+          </p>
+        </div>
+        <div class="mvv-card reveal delay-100">
+          <span class="mvv-icon">🔭</span>
+          <h3>Our Vision</h3>
+          <p>
+            To become the most loved and trusted online food brand in the Philippines — 
+            delivering happiness, one order at a time, in every barangay, city, and province.
+          </p>
+        </div>
+        <div class="mvv-card reveal delay-200">
+          <span class="mvv-icon">🤝</span>
+          <h3>Our Promise</h3>
+          <p>
+            Every order from MCCAT comes with a promise: fresh ingredients, honest pricing, 
+            and delivery that's always on time. Your satisfaction is our only metric of success.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ╔══════════════════════════════════════════════════════╗
+       ║  CORE VALUES                                         ║
+       ╚══════════════════════════════════════════════════════╝ -->
+  <section class="section values-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="tag">💚 Core Values</span>
+        <h2>What We Stand For</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="values-grid stagger">
+        <div class="value-item reveal">
+          <div class="value-icon">🍃</div>
+          <div>
+            <h4>Fresh Always</h4>
+            <p>We use only the freshest ingredients sourced locally. No frozen shortcuts. Every meal is made to order.</p>
+          </div>
+        </div>
+        <div class="value-item reveal delay-100">
+          <div class="value-icon">⚡</div>
+          <div>
+            <h4>Speed Matters</h4>
+            <p>We respect your time. Our kitchen is built for speed without sacrificing the quality of every dish.</p>
+          </div>
+        </div>
+        <div class="value-item reveal delay-200">
+          <div class="value-icon">💰</div>
+          <div>
+            <h4>Honest Pricing</h4>
+            <p>No hidden fees, no nasty surprises. What you see on our menu is exactly what you pay.</p>
+          </div>
+        </div>
+        <div class="value-item reveal delay-300">
+          <div class="value-icon">❤️</div>
+          <div>
+            <h4>Made with Love</h4>
+            <p>Every order is prepared by our passionate team who genuinely loves food and loves making people happy.</p>
+          </div>
+        </div>
+        <div class="value-item reveal delay-400">
+          <div class="value-icon">🌱</div>
+          <div>
+            <h4>Community First</h4>
+            <p>We source from local suppliers and give back to the Cavite community that made us who we are.</p>
+          </div>
+        </div>
+        <div class="value-item reveal delay-500">
+          <div class="value-icon">🏆</div>
+          <div>
+            <h4>Excellence Always</h4>
+            <p>We never stop improving. Every customer feedback is a gift that helps us serve you better tomorrow.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ╔══════════════════════════════════════════════════════╗
+       ║  TEAM                                                ║
+       ╚══════════════════════════════════════════════════════╝ -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="tag">👥 The Team</span>
+        <h2>Meet the People Behind MCCAT</h2>
+        <div class="divider"></div>
+        <p>Our small but mighty team who make every order possible.</p>
+      </div>
+
+      <div class="team-grid stagger">
+        <div class="team-card reveal">
+          <div class="team-avatar">👨‍🍳</div>
+          <div class="team-name">Carlos Ramos</div>
+          <div class="team-role">Founder & Head Chef</div>
+          <p class="team-desc">10+ years in the food industry. Master of the perfect beef patty.</p>
+        </div>
+        <div class="team-card reveal delay-100">
+          <div class="team-avatar">👩‍💼</div>
+          <div class="team-name">Sofia Lim</div>
+          <div class="team-role">Operations Manager</div>
+          <p class="team-desc">Keeps the kitchen running like clockwork. Every order, on time.</p>
+        </div>
+        <div class="team-card reveal delay-200">
+          <div class="team-avatar">👨‍💻</div>
+          <div class="team-name">Marco Santos</div>
+          <div class="team-role">Tech & Delivery Lead</div>
+          <p class="team-desc">Built our ordering system and manages our delivery fleet.</p>
+        </div>
+        <div class="team-card reveal delay-300">
+          <div class="team-avatar">👩‍🎨</div>
+          <div class="team-name">Pia dela Cruz</div>
+          <div class="team-role">Brand & Marketing</div>
+          <p class="team-desc">The creative mind behind MCCAT's look, feel, and social media.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ╔══════════════════════════════════════════════════════╗
+       ║  CTA STRIP                                           ║
+       ╚══════════════════════════════════════════════════════╝ -->
+  <section class="section-sm" style="background:var(--primary-pale);">
+    <div class="container text-center reveal">
+      <h2 style="margin-bottom:0.75rem;">Ready to taste the difference?</h2>
+      <p style="margin-bottom:1.75rem;">Join thousands of satisfied customers who order from MCCAT every week.</p>
+      <a href="order.html" class="btn btn-primary btn-lg hover-shine">Order Now 🛒</a>
+    </div>
+  </section>
+
+  <div id="footerPlaceholder"></div>
+  <button id="backToTop" aria-label="Back to top">↑</button>
+  <div class="toast-container"></div>
+
+  <script src="js/validation.js"></script>
+  <script src="js/navbar.js"></script>
+  <script src="js/animations.js"></script>
+  <script>
+    async function loadComponent(id, file) {
+      try { document.getElementById(id).innerHTML = await (await fetch(file)).text(); } catch(e) {}
+    }
+    loadComponent('navbarPlaceholder', 'components/navbar.html');
+    loadComponent('footerPlaceholder', 'components/footer.html');
+  </script>
+</body>
+</html>

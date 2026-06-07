@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us — MCCAT</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/navbar.css" />
+  <link rel="stylesheet" href="css/forms.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+
+  <style>
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    .contact-info-card {
+      background: linear-gradient(135deg, #0d4f25, var(--primary));
+      border-radius: var(--radius-xl);
+      padding: 2.5rem;
+      color: #fff;
+      position: sticky;
+      top: 90px;
+    }
+    .contact-info-card h3 { color: #fff; margin-bottom: 0.5rem; }
+    .contact-info-card p  { color: rgba(255,255,255,0.8); margin-bottom: 2rem; font-size:0.93rem; }
+    .contact-info-item {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .contact-info-item:last-of-type { border-bottom: none; margin-bottom: 2rem; }
+    .ci-icon {
+      width: 44px;
+      height: 44px;
+      background: rgba(255,255,255,0.12);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .ci-label { font-size: 0.78rem; color: rgba(255,255,255,0.6); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.2rem; }
+    .ci-value { font-weight: 600; font-size: 0.93rem; }
+
+    .contact-social { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+    .contact-social a {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.12);
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; transition: var(--transition); text-decoration: none;
+    }
+    .contact-social a:hover { background: rgba(255,255,255,0.25); transform: translateY(-3px); }
+
+    .hours-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem;
+      margin-top: 1rem;
+    }
+    .hours-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.3rem 0; }
+    .hours-row .day   { color: rgba(255,255,255,0.7); }
+    .hours-row .time  { color: #fff; font-weight: 600; }
+
+    .contact-form-card {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      padding: 2.25rem;
+      box-shadow: var(--shadow-lg);
+    }
+    .contact-form-card h3 { margin-bottom: 0.25rem; }
+    .contact-form-card > p { margin-bottom: 1.75rem; font-size: 0.92rem; }
+
+    .faq-section { background: var(--gray-50,#f9fafb); }
+    .faq-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.25rem; }
+    .faq-item {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      border-left: 4px solid var(--primary);
+      transition: var(--transition);
+    }
+    .faq-item:hover { transform: translateX(4px); box-shadow: var(--shadow-md); }
+    .faq-item h4 { font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--gray-900); }
+    .faq-item p  { font-size: 0.87rem; color: var(--gray-500); margin: 0; line-height: 1.7; }
+
+    @media (max-width: 900px) {
+      .contact-layout { grid-template-columns: 1fr; }
+      .contact-info-card { position: static; }
+      .faq-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="navbarPlaceholder"></div>
+
+  <!-- Hero -->
+  <div class="page-hero">
+    <div class="container">
+      <h1 class="animate-fadeInDown">📞 Contact Us</h1>
+      <p class="animate-fadeInUp delay-100">We'd love to hear from you. Reach out anytime!</p>
+      <div class="breadcrumb">
+        <a href="index.html">Home</a> <span>›</span> <span>Contact</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ╔══════════════════════════════════════════════════════╗
+       ║  CONTACT SECTION                                     ║
+       ╚══════════════════════════════════════════════════════╝ -->
+  <section class="section">
+    <div class="container">
+      <div class="contact-layout">
+
+        <!-- LEFT: Info Card -->
+        <div class="contact-info-card reveal-left">
+          <h3>Get In Touch</h3>
+          <p>Have a question, complaint, or just want to say hi? We're always happy to hear from our customers!</p>
+
+          <div class="contact-info-item">
+            <div class="ci-icon">📍</div>
+            <div>
+              <div class="ci-label">Our Location</div>
+              <div class="ci-value">123 MCCAT Street<br>Imus, Cavite 4103<br>Philippines</div>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <div class="ci-icon">📞</div>
+            <div>
+              <div class="ci-label">Phone Numbers</div>
+              <div class="ci-value">(046) 123-4567<br>+63 912 345 6789</div>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <div class="ci-icon">📧</div>
+            <div>
+              <div class="ci-label">Email Addresses</div>
+              <div class="ci-value">hello@mccat.com<br>support@mccat.com</div>
+            </div>
+          </div>
+
+          <div class="contact-info-item">
+            <div class="ci-icon">🕐</div>
+            <div>
+              <div class="ci-label">Operating Hours</div>
+              <div style="margin-top:0.5rem;">
+                <div class="hours-row"><span class="day">Mon – Fri</span><span class="time">10AM – 10PM</span></div>
+                <div class="hours-row"><span class="day">Saturday</span><span class="time">9AM – 11PM</span></div>
+                <div class="hours-row"><span class="day">Sunday</span><span class="time">10AM – 9PM</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ci-label">Follow Us</div>
+          <div class="contact-social">
+            <a href="#" aria-label="Facebook">📘</a>
+            <a href="#" aria-label="Instagram">📸</a>
+            <a href="#" aria-label="TikTok">🎵</a>
+            <a href="#" aria-label="Twitter">🐦</a>
+          </div>
+        </div>
+
+        <!-- RIGHT: Contact Form -->
+        <div class="contact-form-card reveal-right">
+          <h3>Send Us a Message</h3>
+          <p>Fill out the form below and we'll get back to you within 24 hours.</p>
+
+          <!-- Alert -->
+          <div id="contactAlert"></div>
+
+          <!-- Contact Form
+               PHP BACKEND NOTE:
+               action="api/contact.php" method="POST"
+               Use PHPMailer to send email to hello@mccat.com
+               INSERT INTO contact_messages (name, email, subject, message, created_at)
+          -->
+          <form id="contactForm" novalidate>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="contactName" class="form-label">Full Name <span class="required">*</span></label>
+                <div class="input-group">
+                  <input type="text" id="contactName" name="name"
+                    class="form-control" placeholder="Juan dela Cruz"
+                    maxlength="100" required />
+                  <span class="input-icon">👤</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="contactEmail" class="form-label">Email <span class="required">*</span></label>
+                <div class="input-group">
+                  <input type="email" id="contactEmail" name="email"
+                    class="form-control" placeholder="you@example.com" required />
+                  <span class="input-icon">📧</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="contactPhone" class="form-label">Phone Number</label>
+              <div class="input-group">
+                <input type="tel" id="contactPhone" name="phone"
+                  class="form-control" placeholder="09123456789 (optional)"
+                  maxlength="15" />
+                <span class="input-icon">📞</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="contactSubject" class="form-label">Subject <span class="required">*</span></label>
+              <select id="contactSubject" name="subject" class="form-control" required>
+                <option value="">-- Select a topic --</option>
+                <option value="order_inquiry">Order Inquiry</option>
+                <option value="delivery_issue">Delivery Issue</option>
+                <option value="food_quality">Food Quality Concern</option>
+                <option value="feedback">General Feedback</option>
+                <option value="partnership">Business Partnership</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="contactMessage" class="form-label">Message <span class="required">*</span></label>
+              <textarea id="contactMessage" name="message"
+                class="form-control"
+                placeholder="Tell us how we can help you..."
+                rows="5" required minlength="10" maxlength="1000"></textarea>
+              <span class="form-hint" id="charCount" style="text-align:right;display:block;">0 / 1000</span>
+            </div>
+
+            <button type="submit" id="contactSubmitBtn"
+              class="btn btn-primary btn-full btn-lg btn-submit">
+              <span class="btn-text">📨 Send Message</span>
+              <span class="btn-loader" style="display:none;align-items:center;gap:0.5rem;">
+                <span class="spinner spinner-sm" style="border-color:rgba(255,255,255,0.3);border-top-color:#fff;"></span>
+                Sending...
+              </span>
+            </button>
+
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ╔══════════════════════════════════════════════════════╗
+       ║  FAQ                                                 ║
+       ╚══════════════════════════════════════════════════════╝ -->
+  <section class="section faq-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="tag">❓ FAQ</span>
+        <h2>Frequently Asked Questions</h2>
+        <div class="divider"></div>
+      </div>
+
+      <div class="faq-grid stagger">
+        <div class="faq-item reveal">
+          <h4>How long does delivery take?</h4>
+          <p>Our average delivery time is 30–45 minutes depending on your location within our service area in Cavite.</p>
+        </div>
+        <div class="faq-item reveal delay-100">
+          <h4>What payment methods do you accept?</h4>
+          <p>We currently accept Cash on Delivery (COD). GCash and card payments are coming soon!</p>
+        </div>
+        <div class="faq-item reveal delay-200">
+          <h4>What is your delivery coverage area?</h4>
+          <p>We deliver within Imus, Bacoor, Dasmariñas, General Trias, and surrounding areas in Cavite.</p>
+        </div>
+        <div class="faq-item reveal delay-300">
+          <h4>Can I modify or cancel my order?</h4>
+          <p>You can modify or cancel your order within 5 minutes of placing it by calling us directly at (046) 123-4567.</p>
+        </div>
+        <div class="faq-item reveal delay-400">
+          <h4>Is there a minimum order amount?</h4>
+          <p>There is no minimum order amount! However, orders above ₱500 qualify for free delivery.</p>
+        </div>
+        <div class="faq-item reveal delay-500">
+          <h4>Do you have a loyalty or rewards program?</h4>
+          <p>We're currently building our MCCAT Rewards program. Sign up for our newsletter to be the first to know!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footerPlaceholder"></div>
+  <button id="backToTop" aria-label="Back to top">↑</button>
+  <div class="toast-container"></div>
+
+  <script src="js/validation.js"></script>
+  <script src="js/navbar.js"></script>
+  <script src="js/animations.js"></script>
+  <script>
+    async function loadComponent(id, file) {
+      try { document.getElementById(id).innerHTML = await (await fetch(file)).text(); } catch(e) {}
+    }
+    loadComponent('navbarPlaceholder', 'components/navbar.html');
+    loadComponent('footerPlaceholder', 'components/footer.html');
+
+    /* ── Contact Form Logic ───────────────────────────── */
+    const contactForm   = document.getElementById('contactForm');
+    const contactSubmit = document.getElementById('contactSubmitBtn');
+    const msgArea       = document.getElementById('contactMessage');
+    const charCount     = document.getElementById('charCount');
+
+    // Character counter
+    if (msgArea && charCount) {
+      msgArea.addEventListener('input', () => {
+        charCount.textContent = `${msgArea.value.length} / 1000`;
+        charCount.style.color = msgArea.value.length > 900 ? 'var(--danger)' : 'var(--gray-400)';
+      });
+    }
+
+    if (contactForm) {
+      contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        Validation.clearFormAlert('contactAlert');
+
+        const name    = document.getElementById('contactName').value.trim();
+        const email   = document.getElementById('contactEmail').value.trim();
+        const subject = document.getElementById('contactSubject').value;
+        const message = document.getElementById('contactMessage').value.trim();
+
+        let valid = true;
+
+        const nRes = Validation.validateFullName(name);
+        if (!nRes.valid) { Validation.showFieldError(document.getElementById('contactName'), nRes.message); valid = false; }
+        else Validation.showFieldSuccess(document.getElementById('contactName'));
+
+        const eRes = Validation.validateEmail(email);
+        if (!eRes.valid) { Validation.showFieldError(document.getElementById('contactEmail'), eRes.message); valid = false; }
+        else Validation.showFieldSuccess(document.getElementById('contactEmail'));
+
+        const sRes = Validation.validateSelect(subject, 'subject');
+        if (!sRes.valid) { Validation.showFieldError(document.getElementById('contactSubject'), sRes.message); valid = false; }
+
+        const mRes = Validation.validateTextField(message, 'Message', 10, 1000);
+        if (!mRes.valid) { Validation.showFieldError(document.getElementById('contactMessage'), mRes.message); valid = false; }
+        else Validation.showFieldSuccess(document.getElementById('contactMessage'));
+
+        if (!valid) return;
+
+        // Set loading
+        contactSubmit.disabled = true;
+        const btnText   = contactSubmit.querySelector('.btn-text');
+        const btnLoader = contactSubmit.querySelector('.btn-loader');
+        if (btnText)   btnText.style.opacity   = '0';
+        if (btnLoader) btnLoader.style.display = 'flex';
+
+        // -------------------------------------------------------
+        // SIMULATE SEND
+        // PHP BACKEND: fetch('api/contact.php', { method:'POST', body: JSON.stringify({name,email,subject,message}) })
+        // -------------------------------------------------------
+        console.log('[MCCAT Contact] Message submitted:', { name, email, subject, message });
+        console.log('// PHP BACKEND: POST to api/contact.php');
+        console.log('// SQL: INSERT INTO contact_messages (name, email, subject, message, created_at)');
+
+        setTimeout(() => {
+          contactSubmit.disabled = false;
+          if (btnText)   btnText.style.opacity   = '1';
+          if (btnLoader) btnLoader.style.display = 'none';
+
+          Validation.showFormAlert('contactAlert', 'success',
+            `Thanks ${name}! 🎉 Your message has been received. We'll reply to ${email} within 24 hours.`
+          );
+          if (window.showToast) showToast('Message sent successfully! 📨', 'success');
+          contactForm.reset();
+          if (charCount) charCount.textContent = '0 / 1000';
+        }, 1500);
+      });
+    }
+  </script>
+</body>
+</html>
