@@ -8,7 +8,6 @@ header('Content-Type: text/html; charset=utf-8');
 <style>body{font-family:Arial,Helvetica,sans-serif;margin:20px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:6px}</style>
 </head><body>
 <h1>OLAP Summary</h1>
-<p>Note: run <code>php scripts/olap_etl.php</code> to populate `ordering_dw`.</p>
 <h2>Daily Sales (last 30 days)</h2>
 <?php
 $ds = $conn->query("SELECT sales_date,total_orders,total_revenue,total_items FROM ordering_dw.daily_sales ORDER BY sales_date DESC LIMIT 30");
