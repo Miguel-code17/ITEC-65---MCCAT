@@ -1,0 +1,46 @@
+-- OLAP Data Warehouse schema for MCCAT
+-- Creates a lightweight DW database `ordering_dw` and aggregated tables.
+
+CREATE DATABASE IF NOT EXISTS `ordering_dw`
+  DEFAULT CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+USE `ordering_dw`;
+
+-- Daily sales summary (one row per date)
+CREATE TABLE IF NOT EXISTS `daily_sales` (
+  `sales_date` DATE NOT NULL,
+  `total_orders` INT NOT NULL DEFAULT 0,
+  `total_revenue` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  `total_items` INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`sales_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Product-level daily sales (one row per date+food_id)
+CREATE TABLE IF NOT EXISTS `product_daily_sales` (
+  `sales_date` DATE NOT NULL,
+  `food_id` INT UNSIGNED NOT NULL,
+  `food_name` VARCHAR(150) NOT NULL,
+  `units_sold` INT NOT NULL DEFAULT 0,
+  `revenue` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  PRIMARY KEY (`sales_date`, `food_id`),
+  KEY `idx_product_date` (`sales_date`),
+  KEY `idx_product_food` (`food_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Orders by hour for time-series analysis
+CREATE TABLE IF NOT EXISTS `orders_by_hour` (
+  `hour_start` DATETIME NOT NULL,
+  `order_count` INT NOT NULL DEFAULT 0,
+  `revenue` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  PRIMARY KEY (`hour_start`),
+  KEY `idx_hour` (`hour_start`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Optional: materialized view tables or more aggregates can be added later.
+
+-- Ensure statistics
+ANALYZE TABLE daily_sales;
+ANALYZE TABLE product_daily_sales;
+ANALYZE TABLE orders_by_hour;
+
+-- End of OLAP DW schema

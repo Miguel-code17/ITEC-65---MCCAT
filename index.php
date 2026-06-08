@@ -1,3 +1,9 @@
+<?php
+
+include 'connection.php';
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +18,7 @@
   <link rel="stylesheet" href="css/animations.css" />
 
   <style>
-    /* ── HERO ─────────────────────────────────────────────── */
+    /* Hero section */
     .hero {
       min-height: 100vh;
       background: linear-gradient(135deg, #0d4f25 0%, #1a7a3c 45%, #27ae60 100%);
@@ -118,7 +124,7 @@
       letter-spacing: 0.06em;
     }
 
-    /* Hero Visual Side */
+    /* Hero visual */
     .hero-visual {
       display: flex;
       align-items: center;
@@ -152,7 +158,7 @@
     .hero-badge.top    { top: 10%;  right: -5%; }
     .hero-badge.bottom { bottom: 18%; left: -8%; background: #fff; color: var(--primary); }
 
-    /* ── CATEGORIES STRIP ─────────────────────────────────── */
+    /* Categories strip */
     .categories-strip {
       background: var(--white);
       padding: 3rem 0;
@@ -196,7 +202,7 @@
       gap: 1.5rem;
     }
 
-    /* ── HOW IT WORKS ─────────────────────────────────────── */
+    /* How it works */
     .how-section { background: var(--gray-50, #f9fafb); }
     .steps-grid {
       display: grid;
@@ -241,7 +247,7 @@
     .step-card h4 { margin-bottom: 0.5rem; font-size: 1rem; }
     .step-card p  { font-size: 0.88rem; color: var(--gray-500); }
 
-    /* ── REVIEWS ──────────────────────────────────────────── */
+    /* Reviews section */
     .reviews-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -283,7 +289,7 @@
     .review-stars  { color: #f59e0b; font-size: 0.9rem; margin-bottom: 0.75rem; }
     .review-text   { font-size: 0.9rem; color: var(--gray-600); line-height: 1.7; }
 
-    /* ── PROMO BANNER ─────────────────────────────────────── */
+    /* Promo banner */
     .promo-banner {
       background: linear-gradient(135deg, #0d4f25, var(--primary), #27ae60);
       border-radius: var(--radius-xl);
@@ -319,7 +325,7 @@
       margin-top: 0.75rem;
     }
 
-    /* ── RESPONSIVE ───────────────────────────────────────── */
+    /* Responsive */
     @media (max-width: 900px) {
       .hero-inner { grid-template-columns: 1fr; text-align: center; }
       .hero-visual { display: none; }
@@ -367,10 +373,10 @@
           </p>
 
           <div class="hero-actions animate-fadeInUp delay-300">
-            <a href="order.html" class="btn btn-accent btn-lg hover-shine">
+            <a href="order.php" class="btn btn-accent btn-lg hover-shine">
               🛒 Order Now
             </a>
-            <a href="menu.html" class="btn btn-outline btn-lg">
+            <a href="menu.php" class="btn btn-outline btn-lg">
               🍔 View Menu
             </a>
           </div>
@@ -410,27 +416,27 @@
   <section class="categories-strip">
     <div class="container">
       <div class="cat-grid">
-        <a href="menu.html" class="cat-card reveal">
+        <a href="menu.php" class="cat-card reveal">
           <span class="emoji">🍽️</span>
           <span>All Items</span>
         </a>
-        <a href="menu.html?cat=burgers" class="cat-card reveal delay-100">
+        <a href="menu.php?cat=burgers" class="cat-card reveal delay-100">
           <span class="emoji">🍔</span>
           <span>Burgers</span>
         </a>
-        <a href="menu.html?cat=chicken" class="cat-card reveal delay-200">
+        <a href="menu.php?cat=chicken" class="cat-card reveal delay-200">
           <span class="emoji">🍗</span>
           <span>Chicken</span>
         </a>
-        <a href="menu.html?cat=sides" class="cat-card reveal delay-300">
+        <a href="menu.php?cat=sides" class="cat-card reveal delay-300">
           <span class="emoji">🍟</span>
           <span>Sides</span>
         </a>
-        <a href="menu.html?cat=drinks" class="cat-card reveal delay-400">
+        <a href="menu.php?cat=drinks" class="cat-card reveal delay-400">
           <span class="emoji">🥤</span>
           <span>Drinks</span>
         </a>
-        <a href="menu.html?cat=desserts" class="cat-card reveal delay-500">
+        <a href="menu.php?cat=desserts" class="cat-card reveal delay-500">
           <span class="emoji">🍦</span>
           <span>Desserts</span>
         </a>
@@ -459,7 +465,7 @@
       </div>
 
       <div class="text-center mt-4" style="margin-top:2.5rem;">
-        <a href="menu.html" class="btn btn-secondary btn-lg reveal">View Full Menu →</a>
+        <a href="menu.php" class="btn btn-secondary btn-lg reveal">View Full Menu →</a>
       </div>
     </div>
   </section>
@@ -570,7 +576,7 @@
           <p>Get FREE delivery on your first order. Use the promo code below at checkout.</p>
           <div class="promo-code">MCCAT-FIRST</div>
         </div>
-        <a href="order.html" class="btn btn-accent btn-lg hover-shine">Order Now →</a>
+        <a href="order.php" class="btn btn-accent btn-lg hover-shine">Order Now →</a>
       </div>
     </div>
   </section>
@@ -594,7 +600,7 @@
   <script src="js/animations.js"></script>
 
   <script>
-    /* ── Load Navbar & Footer Components ─────────────────── */
+    // Load navbar and footer
     async function loadComponent(id, file) {
       try {
         const res  = await fetch(file);
@@ -605,10 +611,10 @@
       }
     }
 
-    loadComponent('navbarPlaceholder', 'components/navbar.html');
+    loadComponent('navbarPlaceholder', 'components/navbar.php');
     loadComponent('footerPlaceholder', 'components/footer.html');
 
-    /* ── Load Popular & Featured Foods ───────────────────── */
+    // Load popular and featured foods
     async function loadHomeFoods() {
       try {
         // PHP BACKEND: Replace with fetch('api/foods.php?featured=1')
@@ -647,7 +653,7 @@
             </div>
             <div class="food-card-footer">
               <span class="food-card-price">₱${f.price.toFixed(2)}</span>
-              <a href="order.html?food=${f.id}" class="btn btn-primary btn-sm hover-shine">Order 🛒</a>
+              <a href="order.php?food=${f.id}" class="btn btn-primary btn-sm hover-shine">Order 🛒</a>
             </div>
           </div>
         </div>

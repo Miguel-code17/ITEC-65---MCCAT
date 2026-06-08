@@ -109,7 +109,7 @@
       <h1 class="animate-fadeInDown">📞 Contact Us</h1>
       <p class="animate-fadeInUp delay-100">We'd love to hear from you. Reach out anytime!</p>
       <div class="breadcrumb">
-        <a href="index.html">Home</a> <span>›</span> <span>Contact</span>
+        <a href="index.php">Home</a> <span>›</span> <span>Contact</span>
       </div>
     </div>
   </div>
@@ -306,7 +306,7 @@
     async function loadComponent(id, file) {
       try { document.getElementById(id).innerHTML = await (await fetch(file)).text(); } catch(e) {}
     }
-    loadComponent('navbarPlaceholder', 'components/navbar.html');
+    loadComponent('navbarPlaceholder', 'components/navbar.php');
     loadComponent('footerPlaceholder', 'components/footer.html');
 
     /* ── Contact Form Logic ───────────────────────────── */

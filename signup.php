@@ -1,3 +1,50 @@
+<?php
+session_start();
+include 'connection.php';
+
+$signupError = '';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $fullname = trim($_POST['fullname'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $phone = trim($_POST['phone'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $confirm = $_POST['confirm_password'] ?? '';
+
+    if ($fullname === '' || mb_strlen($fullname) < 2 || mb_strlen($fullname) > 100) {
+        $signupError = 'Please enter your full name (2 to 100 characters).';
+    } elseif ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $signupError = 'Please enter a valid email address.';
+    } elseif ($phone === '' || !preg_match('/^(\+63|0)9[0-9]{9}$/', preg_replace('/[\s\-()]/', '', $phone))) {
+        $signupError = 'Please enter a valid Philippine phone number.';
+    } elseif ($password === '' || strlen($password) < 8) {
+        $signupError = 'Password must be at least 8 characters.';
+    } elseif ($password !== $confirm) {
+        $signupError = 'Passwords do not match.';
+    } else {
+        $check = $conn->prepare('SELECT id FROM users WHERE email = ?');
+        $check->bind_param('s', $email);
+        $check->execute();
+        $check->store_result();
+
+        if ($check->num_rows > 0) {
+            $signupError = 'Email already exists. Please use a different email.';
+        } else {
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $conn->prepare('INSERT INTO users (fullname, email, phone, password) VALUES (?, ?, ?, ?)');
+            $stmt->bind_param('ssss', $fullname, $email, $phone, $hashedPassword);
+
+            if ($stmt->execute()) {
+                header('Location: login.php?registered=1');
+                exit();
+            } else {
+                $signupError = 'Registration failed. Please try again later.';
+            }
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,14 +75,16 @@
       </div>
 
       <!-- Alert -->
-      <div id="signupAlert"></div>
+      <div id="signupAlert">
+        <?php if (!empty($signupError)) echo '<div class="alert alert-error">' . htmlspecialchars($signupError) . '</div>'; ?>
+      </div>
 
       <!-- Signup Form
            PHP BACKEND NOTE:
            action="api/register.php" method="POST"
            Sanitize all inputs server-side with htmlspecialchars() / prepared statements
       -->
-      <form id="signupForm" novalidate autocomplete="on">
+      <form id="signupForm" method="POST" autocomplete="on">
 
         <!-- Full Name -->
         <div class="form-group">
@@ -46,7 +95,7 @@
             <input
               type="text"
               id="signupFullName"
-              name="full_name"
+              name="fullname"
               class="form-control"
               placeholder="e.g. Juan dela Cruz"
               autocomplete="name"
@@ -178,7 +227,7 @@
       <!-- Footer -->
       <div class="form-footer" style="margin-top:1.25rem;">
         Already have an account?
-        <a href="login.html">Sign in →</a>
+        <a href="login.php">Sign in →</a>
       </div>
 
     </div>
@@ -194,7 +243,7 @@
     async function loadComponent(id, file) {
       try { document.getElementById(id).innerHTML = await (await fetch(file)).text(); } catch(e) {}
     }
-    loadComponent('navbarPlaceholder', 'components/navbar.html');
+    loadComponent('navbarPlaceholder', 'components/navbar.php');
   </script>
 </body>
 </html>

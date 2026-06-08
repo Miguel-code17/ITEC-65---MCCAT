@@ -1,3 +1,9 @@
+<?php
+
+include 'connection.php';
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +15,7 @@
   <link rel="stylesheet" href="css/animations.css" />
 
   <style>
-    /* ── MENU PAGE SPECIFIC ───────────────────────────── */
+    /* Menu page */
     .menu-controls {
       background: var(--white);
       padding: 1.5rem 0;
@@ -74,7 +80,7 @@
       border-color: var(--primary);
     }
 
-    /* Category Tabs */
+    /* Category tabs */
     .category-tabs-wrapper {
       background: var(--white);
       padding: 1rem 0;
@@ -128,7 +134,7 @@
     .results-bar p { margin: 0; font-size: 0.9rem; color: var(--gray-500); }
     .results-bar strong { color: var(--gray-800); }
 
-    /* Food Grid */
+    /* Food grid */
     .food-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -151,7 +157,7 @@
       <h1 class="animate-fadeInDown">🍔 Our Full Menu</h1>
       <p class="animate-fadeInUp delay-100">Fresh, delicious food made to order. Browse and pick your favorites!</p>
       <div class="breadcrumb">
-        <a href="index.html">Home</a>
+        <a href="index.php">Home</a>
         <span>›</span>
         <span>Menu</span>
       </div>
@@ -200,7 +206,7 @@
       <!-- Results Count -->
       <div class="results-bar">
         <p>Showing <strong><span id="resultsCount">—</span></strong> items</p>
-        <a href="order.html" class="btn btn-primary btn-sm">🛒 Go to Order Form</a>
+        <a href="order.php" class="btn btn-primary btn-sm">🛒 Go to Order Form</a>
       </div>
 
       <!-- Food Grid (rendered by menu.js) -->
@@ -233,7 +239,7 @@
     async function loadComponent(id, file) {
       try { document.getElementById(id).innerHTML = await (await fetch(file)).text(); } catch(e) {}
     }
-    loadComponent('navbarPlaceholder', 'components/navbar.html');
+    loadComponent('navbarPlaceholder', 'components/navbar.php');
     loadComponent('footerPlaceholder', 'components/footer.html');
   </script>
 </body>

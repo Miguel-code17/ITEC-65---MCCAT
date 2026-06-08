@@ -1,9 +1,8 @@
-<!-- ============================================================
-     MCCAT - Navbar Component (navbar.html)
-     Usage: Include via JS fetch() or copy-paste into each page
-     NOTE: For PHP integration, replace with <?php include 'components/navbar.php'; ?>
-     ============================================================ -->
-
+<?php
+session_start();
+$userName = isset($_SESSION['user_name']) ? $_SESSION['user_name'] : null;
+$isLoggedIn = !empty($_SESSION['user_id']);
+?>
 <nav id="navbar">
   <div class="navbar-container">
 
@@ -31,28 +30,45 @@
         </a>
       </li>
       <li class="nav-item">
-        <a href="about.php" class="nav-link" data-page="about">
+        <a href="about.html" class="nav-link" data-page="about">
           <span class="nav-icon">ℹ️</span> About
         </a>
       </li>
       <li class="nav-item">
-        <a href="contact.php" class="nav-link" data-page="contact">
+        <a href="contact.html" class="nav-link" data-page="contact">
           <span class="nav-icon">📞</span> Contact
         </a>
       </li>
 
+      <?php if ($isLoggedIn): ?>
+      <li class="nav-item nav-user-badge">
+        <span class="nav-link nav-user">👋 Hello, <?= htmlspecialchars($userName, ENT_QUOTES, 'UTF-8') ?></span>
+      </li>
+      <?php endif; ?>
+
       <!-- Mobile-only divider & actions -->
       <div class="nav-divider"></div>
       <div class="mobile-nav-actions">
-        <a href="login.php" class="btn btn-secondary">Login</a>
-        <a href="order.php" class="btn btn-primary">Order Now 🛒</a>
+        <?php if ($isLoggedIn): ?>
+          <a href="logout.php" class="btn btn-secondary">Logout</a>
+          <a href="order.php" class="btn btn-primary">Order Now 🛒</a>
+        <?php else: ?>
+          <a href="login.php" class="btn btn-secondary">Login</a>
+          <a href="order.php" class="btn btn-primary">Order Now 🛒</a>
+        <?php endif; ?>
       </div>
     </ul>
 
     <!-- Desktop Actions -->
     <div class="navbar-actions">
-      <a href="login.php" class="btn-login">Login</a>
-      <a href="order.php" class="btn-order-now">Order Now 🛒</a>
+      <?php if ($isLoggedIn): ?>
+
+        <a href="logout.php" class="btn btn-secondary">Logout</a>
+        <a href="order.php" class="btn btn-primary">Order Now 🛒</a>
+      <?php else: ?>
+        <a href="login.php" class="btn-login">Login</a>
+        <a href="order.php" class="btn-order-now">Order Now 🛒</a>
+      <?php endif; ?>
     </div>
 
     <!-- Hamburger Button -->

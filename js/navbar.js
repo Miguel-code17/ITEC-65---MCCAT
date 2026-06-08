@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
      ============================================================ */
 
   function setActiveNavLink() {
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const currentPage = window.location.pathname.split('/').pop() || 'index.php';
     const pageBase    = currentPage.replace('.html', '') || 'index';
 
     navLinks.forEach(link => {

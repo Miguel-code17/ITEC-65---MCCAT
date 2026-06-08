@@ -1,3 +1,11 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,18 +19,14 @@
   <link rel="stylesheet" href="css/forms.css" />
 
   <style>
-    /* ============================================================
-       ORDER PAGE — Minimal, clean styles only.
-       No keyframes, no transitions beyond simple hover states.
-       Easy for beginners to read and modify.
-       ============================================================ */
+    /* Order page styles */
 
-    /* --- Page wrapper gives breathing room below fixed navbar --- */
+    /* Page wrapper */
     .order-page {
       padding: 2.5rem 0 4rem;
     }
 
-    /* --- Two-column layout: form left, cart right -------------- */
+    /* Two-column layout */
     .order-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -30,7 +34,7 @@
       align-items: start;
     }
 
-    /* --- Section boxes (white card with border) ---------------- */
+    /* Section boxes */
     .order-box {
       background: #ffffff;
       border: 1px solid #e5e7eb;
@@ -48,7 +52,7 @@
       border-bottom: 2px solid #f3f4f6;
     }
 
-    /* --- Add-to-cart row: select + qty + button side by side --- */
+    /* Add-to-cart row */
     .add-item-row {
       display: grid;
       grid-template-columns: 1fr 90px auto;
@@ -56,7 +60,7 @@
       align-items: end;
     }
 
-    /* --- Cart Table -------------------------------------------- */
+    /* Cart table */
     .cart-table {
       width: 100%;
       border-collapse: collapse;
@@ -96,7 +100,7 @@
       border-bottom: none;
     }
 
-    /* Highlight subtotal row */
+    /* Subtotal row */
     .cart-table tfoot tr {
       background: #f9fafb;
     }
@@ -108,7 +112,7 @@
       font-size: 0.95rem;
     }
 
-    /* --- Remove button ----------------------------------------- */
+    /* Remove button */
     .btn-remove {
       background: #fee2e2;
       color: #dc2626;
@@ -124,7 +128,7 @@
       background: #fecaca;
     }
 
-    /* --- Empty cart message ------------------------------------ */
+    /* Empty cart */
     .cart-empty {
       text-align: center;
       padding: 2rem 1rem;
@@ -138,7 +142,7 @@
       margin-bottom: 0.5rem;
     }
 
-    /* --- Totals area below table ------------------------------- */
+    /* Totals */
     .cart-totals {
       margin-top: 1rem;
       border-top: 1px solid #e5e7eb;
@@ -166,7 +170,7 @@
       color: #1a7a3c;
     }
 
-    /* --- Delivery note ----------------------------------------- */
+    /* Delivery note */
     .delivery-note {
       font-size: 0.8rem;
       color: #6b7280;
@@ -174,7 +178,7 @@
       text-align: right;
     }
 
-    /* --- Checkout button --------------------------------------- */
+    /* Checkout button */
     .btn-checkout {
       width: 100%;
       margin-top: 1.25rem;
@@ -198,7 +202,7 @@
       cursor: not-allowed;
     }
 
-    /* --- Add to Cart button ------------------------------------ */
+    /* Add to cart button */
     .btn-add-to-cart {
       padding: 0.72rem 1.1rem;
       background: #1a7a3c;
@@ -216,7 +220,7 @@
       background: #145e2e;
     }
 
-    /* --- Success message (shown after checkout) ---------------- */
+    /* Success message */
     .order-success {
       display: none;
       background: #d1fae5;
@@ -256,7 +260,7 @@
       margin: 0.75rem 0;
     }
 
-    /* --- Delivery info list ------------------------------------ */
+    /* Delivery info */
     .delivery-info-list {
       list-style: none;
       padding: 0;
@@ -279,7 +283,7 @@
       margin-top: 1px;
     }
 
-    /* --- Page hero (minimal version) --------------------------- */
+    /* Page hero */
     .page-hero-simple {
       background: linear-gradient(135deg, #145e2e, #1a7a3c);
       padding: 3rem 0 2.25rem;
@@ -311,7 +315,7 @@
       text-decoration: none;
     }
 
-    /* --- Responsive -------------------------------------------- */
+    /* Responsive */
     @media (max-width: 800px) {
       .order-grid {
         grid-template-columns: 1fr;
@@ -321,7 +325,7 @@
         grid-template-columns: 1fr 80px;
       }
 
-      /* Move the Add button to its own row on small screens */
+      /* Move button to own row on small screens */
       .add-item-row .btn-add-to-cart {
         grid-column: 1 / -1;
       }
@@ -345,9 +349,9 @@
       <h1>🛒 Place Your Order</h1>
       <p>Choose your items, review your cart, then checkout.</p>
       <nav class="breadcrumb" aria-label="Breadcrumb">
-        <a href="index.html">Home</a>
+        <a href="index.php">Home</a>
         <span>›</span>
-        <a href="menu.html">Menu</a>
+        <a href="menu.php">Menu</a>
         <span>›</span>
         <span>Order</span>
       </nav>
@@ -369,8 +373,8 @@
         <p>Our team is preparing your food now. Estimated delivery: <strong>30–45 minutes</strong>.</p>
         <p style="margin-top:0.5rem;">We'll contact you at the number you provided.</p>
         <div style="margin-top:1.25rem;display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;">
-          <a href="menu.html" class="btn btn-secondary btn-sm">← Back to Menu</a>
-          <a href="index.html" class="btn btn-primary btn-sm">🏠 Go Home</a>
+          <a href="menu.php" class="btn btn-secondary btn-sm">← Back to Menu</a>
+          <a href="index.php" class="btn btn-primary btn-sm">🏠 Go Home</a>
         </div>
       </div>
 
@@ -642,7 +646,7 @@
         console.warn('Could not load component:', file);
       }
     }
-    loadComponent('navbarPlaceholder', 'components/navbar.html');
+    loadComponent('navbarPlaceholder', 'components/navbar.php');
     loadComponent('footerPlaceholder', 'components/footer.html');
   </script>
 

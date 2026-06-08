@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <div>
             <div class="food-card-price">₱${food.price.toFixed(2)}</div>
           </div>
-          <a href="order.html?food=${food.id}" class="btn btn-primary btn-sm hover-shine">
+          <a href="order.php?food=${food.id}" class="btn btn-primary btn-sm hover-shine">
             Order 🛒
           </a>
         </div>

@@ -68,13 +68,11 @@ document.addEventListener('DOMContentLoaded', function () {
      ============================================================ */
 
   loginForm.addEventListener('submit', function (e) {
-    e.preventDefault();
     Validation.clearFormAlert('loginAlert');
 
     const email    = emailInput ? emailInput.value.trim() : '';
     const password = passwordInput ? passwordInput.value : '';
 
-    // --- Client-side Validation ---
     let isValid = true;
 
     const emailResult = Validation.validateEmail(email);
@@ -92,37 +90,13 @@ document.addEventListener('DOMContentLoaded', function () {
       Validation.showFieldSuccess(passwordInput);
     }
 
-    if (!isValid) return;
+    if (!isValid) {
+      e.preventDefault();
+      return;
+    }
 
-    // --- Set loading state ---
     setLoadingState(true);
-
-    // -----------------------------------------------------------
-    // SIMULATE LOGIN (Frontend only)
-    // -----------------------------------------------------------
-    // REPLACE THIS WITH PHP BACKEND LATER:
-    //
-    // fetch('api/login.php', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ email, password, remember: rememberMe.checked })
-    // })
-    // .then(res => res.json())
-    // .then(data => {
-    //   if (data.success) {
-    //     window.location.href = data.redirect || 'menu.html';
-    //   } else {
-    //     showLoginError(data.message || 'Invalid credentials.');
-    //   }
-    // })
-    // .catch(err => {
-    //   showLoginError('Server error. Please try again.');
-    //   console.error('[Login Error]', err);
-    // })
-    // .finally(() => setLoadingState(false));
-    // -----------------------------------------------------------
-
-    simulateLogin(email, password);
+    // Allow the native form submission to continue.
   });
 
   /* ============================================================
@@ -149,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (isDemo) {
         showLoginSuccess('Login successful! Redirecting...');
         setTimeout(() => {
-          window.location.href = 'menu.html';
+          window.location.href = 'menu.php'; 
         }, 1500);
       } else {
         showLoginError('Invalid email or password. Please try again.');
@@ -206,3 +180,5 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
 });
+
+

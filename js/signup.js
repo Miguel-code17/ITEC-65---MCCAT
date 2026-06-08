@@ -131,12 +131,11 @@ document.addEventListener('DOMContentLoaded', function () {
      ============================================================ */
 
   signupForm.addEventListener('submit', function (e) {
-    e.preventDefault();
     Validation.clearFormAlert('signupAlert');
 
     // Gather values
     const formData = {
-      full_name:        fullNameInput  ? fullNameInput.value.trim()  : '',
+      fullname:         fullNameInput  ? fullNameInput.value.trim()  : '',
       email:            emailInput     ? emailInput.value.trim()     : '',
       phone:            phoneInput     ? phoneInput.value.trim()     : '',
       password:         passwordInput  ? passwordInput.value         : '',
@@ -147,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Validate all fields
     let isValid = true;
 
-    const nameResult = Validation.validateFullName(formData.full_name);
+    const nameResult = Validation.validateFullName(formData.fullname);
     if (!nameResult.valid) { Validation.showFieldError(fullNameInput, nameResult.message); isValid = false; }
     else Validation.showFieldSuccess(fullNameInput);
 
@@ -171,39 +170,13 @@ document.addEventListener('DOMContentLoaded', function () {
       isValid = false;
     }
 
-    if (!isValid) return;
+    if (!isValid) {
+      e.preventDefault();
+      return;
+    }
 
-    // Set loading
     setLoadingState(true);
-
-    // -----------------------------------------------------------
-    // SIMULATE SIGNUP (Frontend only)
-    // -----------------------------------------------------------
-    // REPLACE WITH PHP BACKEND LATER:
-    //
-    // fetch('api/register.php', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({
-    //     full_name: formData.full_name,
-    //     email:     formData.email,
-    //     phone:     formData.phone,
-    //     password:  formData.password
-    //   })
-    // })
-    // .then(res => res.json())
-    // .then(data => {
-    //   if (data.success) {
-    //     window.location.href = 'menu.html';
-    //   } else {
-    //     Validation.showFormAlert('signupAlert', 'error', data.message);
-    //   }
-    // })
-    // .catch(() => Validation.showFormAlert('signupAlert', 'error', 'Server error. Please try again.'))
-    // .finally(() => setLoadingState(false));
-    // -----------------------------------------------------------
-
-    simulateSignup(formData);
+    // Allow native form submission to the server.
   });
 
   /* ============================================================
@@ -212,23 +185,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function simulateSignup(formData) {
     console.log('[MCCAT Signup] New user registration:');
-    console.log('  Name:  ', formData.full_name);
+    console.log('  Name:  ', formData.fullname);
     console.log('  Email: ', formData.email);
     console.log('  Phone: ', formData.phone);
     console.log('  Pass:  ', '***hidden***');
     console.log('---');
     console.log('// PHP BACKEND INTEGRATION POINT:');
     console.log('// POST to: api/register.php');
-    console.log('// Database: INSERT INTO users (full_name, email, phone, password_hash, created_at)');
+    console.log('// Database: INSERT INTO users (fullname, email, phone, password_hash, created_at)');
 
     setTimeout(() => {
       setLoadingState(false);
       Validation.showFormAlert('signupAlert', 'success',
-        `Welcome to MCCAT, ${formData.full_name}! Your account has been created. Redirecting to menu...`
+        `Welcome to MCCAT, ${formData.fullname}! Your account has been created. Redirecting to menu...`
       );
       if (window.showToast) showToast('Account created successfully! 🎉', 'success');
 
-      setTimeout(() => { window.location.href = 'menu.html'; }, 2000);
+      setTimeout(() => { window.location.href = 'menu.php'; }, 2000);
     }, 1800);
   }
 

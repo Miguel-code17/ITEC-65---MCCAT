@@ -407,19 +407,13 @@ function checkout() {
   checkoutBtn.disabled      = true;
   checkoutBtn.textContent   = 'Placing order...';
 
-  // ── BACKEND INTEGRATION POINT ──────────────────────────────
-  // When your PHP backend is ready, DELETE the simulateCheckout()
-  // call below and UNCOMMENT the submitOrder() call instead.
-  //
-  // submitOrder(payload);
-  // ────────────────────────────────────────────────────────────
-
-  simulateCheckout(payload);
+  // Send the order payload to the PHP backend
+  submitOrder(payload);
 }
 
 /* ============================================================
    submitOrder() — REAL FETCH TO PHP BACKEND
-   Uncomment and use this when api/place-order.php is ready.
+   This function sends the order payload to api/place-order.php.
 
    What your PHP file should do:
      1. Receive raw JSON:  $data = json_decode(file_get_contents('php://input'), true);
@@ -431,7 +425,6 @@ function checkout() {
      7. Return:  echo json_encode(['success' => true, 'order_id' => $newOrderId]);
    ============================================================ */
 
-/*
 async function submitOrder(payload) {
   try {
     const response = await fetch('api/place-order.php', {
@@ -441,7 +434,8 @@ async function submitOrder(payload) {
     });
 
     if (!response.ok) {
-      throw new Error('Server returned status ' + response.status);
+      const text = await response.text();
+      throw new Error('Server returned status ' + response.status + ' - ' + text);
     }
 
     const result = await response.json();
@@ -449,7 +443,6 @@ async function submitOrder(payload) {
     if (result.success) {
       onOrderSuccess(result.order_id);
     } else {
-      // PHP sent back a validation or business-logic error
       showAlert('error', result.message || 'Order failed. Please try again.');
       checkoutBtn.disabled    = false;
       checkoutBtn.textContent = '🚀 Place Order';
@@ -462,7 +455,6 @@ async function submitOrder(payload) {
     checkoutBtn.textContent = '🚀 Place Order';
   }
 }
-*/
 
 /* ============================================================
    simulateCheckout() — FRONTEND DEMO ONLY
