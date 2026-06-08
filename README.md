@@ -63,6 +63,12 @@ The project uses a MySQL database to store user information, orders, and other s
 ## Developers
 
 Developed by the MCCAT Development Team
+### Members
+- Miguel Lumactod
+- Gervin Villaflor Signo
+- Charlie Oras
+- Genrev Reyes Tano
+- Joshua Limpioso
 
 Course: ITEC 65 – Multimedia Systems
 
