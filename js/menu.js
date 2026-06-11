@@ -243,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function () {
       <div class="food-card-image" style="position:relative;">
         ${isFeatured}
         ${isPopular}
-        ${generateFoodSVG(food)}
+        <img src="${escapeHTML(food.image)}" alt="${escapeHTML(food.name)}" loading="lazy" onerror="this.onerror=null;this.src='images/placeholder.svg'" />
       </div>
       <div class="food-card-body">
         <h3 class="food-card-name">${escapeHTML(food.name)}</h3>
@@ -273,36 +273,14 @@ document.addEventListener('DOMContentLoaded', function () {
      (Replace <img> tags when you have real food images)
      ============================================================ */
 
-  function generateFoodSVG(food) {
-    const emojiMap = {
-      burgers:  '🍔',
-      chicken:  '🍗',
-      sides:    '🍟',
-      drinks:   '🥤',
-      desserts: '🍦'
-    };
-    const emoji = emojiMap[food.category] || '🍽️';
-    const colors = {
-      burgers:  '#fff3e0',
-      chicken:  '#fce4ec',
-      sides:    '#fffde7',
-      drinks:   '#e3f2fd',
-      desserts: '#fce4ec'
-    };
-    const bg = colors[food.category] || '#e8f5ee';
-
-    return `
-      <div style="
-        width:100%;height:200px;
-        background:${bg};
-        display:flex;align-items:center;justify-content:center;
-        font-size:80px;
-        transition:transform 0.3s ease;
-      " class="food-emoji-display">
-        ${emoji}
-      </div>
-    `;
-  }
+  /* ============================================================
+     IMAGE RENDERER
+     Uses the food image path defined in data/foods.json.
+     If the image fails to load, it falls back to a placeholder.
+     ============================================================ */
+  
+  // No extra function body needed here because the image element
+  // is rendered directly in createFoodCard().
 
   /* ============================================================
      STAR RATING GENERATOR

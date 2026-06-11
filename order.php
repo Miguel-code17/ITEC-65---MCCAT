@@ -422,9 +422,12 @@ if (!isset($_SESSION['user_id'])) {
                   id="orderPhone"
                   name="phone"
                   class="form-control"
-                  placeholder="09123456789"
+                  placeholder="09123456789 or +639123456789"
                   autocomplete="tel"
-                  maxlength="15"
+                  inputmode="tel"
+                  pattern="^(\+63|0)9[0-9]{9}$"
+                  title="Use 09123456789 or +639123456789"
+                  maxlength="14"
                   required
                 />
                 <span class="form-hint">We'll call or text this number for updates.</span>

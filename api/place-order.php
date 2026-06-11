@@ -32,7 +32,7 @@ if ($name === '' || mb_strlen($name) < 2 || mb_strlen($name) > 100) {
 
 $cleanPhone = preg_replace('/[\s\-()]/', '', $phone);
 if ($cleanPhone === '' || !preg_match('/^(\+63|0)9[0-9]{9}$/', $cleanPhone)) {
-    $errors[] = 'Please enter a valid Philippine phone number (e.g. 09123456789).';
+    $errors[] = 'Please enter a valid Philippine phone number (e.g. 09123456789 or +639123456789).';
 }
 
 if ($address === '' || mb_strlen($address) < 10) {

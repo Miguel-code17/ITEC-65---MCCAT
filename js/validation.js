@@ -109,7 +109,7 @@ function validatePhone(phone) {
   const phRegex  = /^(\+63|0)9[0-9]{9}$/;
   const landline = /^(\+63|0)?[2-8][0-9]{6,8}$/;
   if (!phRegex.test(cleaned) && !landline.test(cleaned)) {
-    return { valid: false, message: 'Enter a valid PH number (e.g. 09123456789).' };
+    return { valid: false, message: 'Enter a valid PH number (e.g. 09123456789 or +639123456789).' };
   }
   return { valid: true, message: '' };
 }
