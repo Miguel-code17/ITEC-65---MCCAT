@@ -20,7 +20,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const signupForm     = document.getElementById('signupForm');
   if (!signupForm) return; // Guard — only run on signup page
 
-  const fullNameInput  = document.getElementById('signupFullName');
+  const firstNameInput = document.getElementById('signupFirstName');
+  const lastNameInput  = document.getElementById('signupLastName');
   const emailInput     = document.getElementById('signupEmail');
   const phoneInput     = document.getElementById('signupPhone');
   const passwordInput  = document.getElementById('signupPassword');
@@ -106,7 +107,8 @@ document.addEventListener('DOMContentLoaded', function () {
      REAL-TIME VALIDATION
      ============================================================ */
 
-  if (fullNameInput) Validation.attachRealtimeValidation(fullNameInput, Validation.validateFullName);
+  if (firstNameInput) Validation.attachRealtimeValidation(firstNameInput, (v) => Validation.validateTextField(v, 'First name', 2, 50));
+  if (lastNameInput)  Validation.attachRealtimeValidation(lastNameInput,  (v) => Validation.validateTextField(v, 'Last name', 2, 50));
   if (emailInput)    Validation.attachRealtimeValidation(emailInput,    Validation.validateEmail);
   if (phoneInput)    Validation.attachRealtimeValidation(phoneInput,    Validation.validatePhone);
 
@@ -135,7 +137,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Gather values
     const formData = {
-      fullname:         fullNameInput  ? fullNameInput.value.trim()  : '',
+      first_name:       firstNameInput ? firstNameInput.value.trim() : '',
+      last_name:        lastNameInput  ? lastNameInput.value.trim()  : '',
+      fullname:         (firstNameInput ? firstNameInput.value.trim() : '') + ' ' + (lastNameInput ? lastNameInput.value.trim() : ''),
       email:            emailInput     ? emailInput.value.trim()     : '',
       phone:            phoneInput     ? phoneInput.value.trim()     : '',
       password:         passwordInput  ? passwordInput.value         : '',
@@ -147,8 +151,14 @@ document.addEventListener('DOMContentLoaded', function () {
     let isValid = true;
 
     const nameResult = Validation.validateFullName(formData.fullname);
-    if (!nameResult.valid) { Validation.showFieldError(fullNameInput, nameResult.message); isValid = false; }
-    else Validation.showFieldSuccess(fullNameInput);
+    if (!nameResult.valid) {
+      if (firstNameInput) Validation.showFieldError(firstNameInput, nameResult.message);
+      if (lastNameInput)  Validation.showFieldError(lastNameInput,  nameResult.message);
+      isValid = false;
+    } else {
+      if (firstNameInput) Validation.showFieldSuccess(firstNameInput);
+      if (lastNameInput)  Validation.showFieldSuccess(lastNameInput);
+    }
 
     const emailResult = Validation.validateEmail(formData.email);
     if (!emailResult.valid) { Validation.showFieldError(emailInput, emailResult.message); isValid = false; }

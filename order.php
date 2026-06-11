@@ -397,20 +397,12 @@ if (!isset($_SESSION['user_id'])) {
             <div class="order-box">
               <h3>👤 Customer Information</h3>
 
+              <!-- Authenticated user's name is automatically used (hidden from input) -->
+              <input type="hidden" id="authenticatedUserName" value="<?php echo htmlspecialchars($_SESSION['user_name'], ENT_QUOTES, 'UTF-8'); ?>" />
               <div class="form-group">
-                <label for="orderName" class="form-label">
-                  Full Name <span class="required">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="orderName"
-                  name="customer_name"
-                  class="form-control"
-                  placeholder="Juan dela Cruz"
-                  autocomplete="name"
-                  maxlength="100"
-                  required
-                />
+                <p style="margin: 0 0 1rem 0; font-size: 0.95rem;">
+                  <strong>Name:</strong> <?php echo htmlspecialchars($_SESSION['user_name'], ENT_QUOTES, 'UTF-8'); ?>
+                </p>
               </div>
 
               <div class="form-group">
@@ -463,52 +455,7 @@ if (!isset($_SESSION['user_id'])) {
               </div>
             </div>
 
-            <!-- Section 2: Add Item to Cart -->
-            <div class="order-box">
-              <h3>🍔 Add Item to Cart</h3>
-
-              <div class="form-group">
-                <label for="foodSelect" class="form-label">Food Item</label>
-                <select id="foodSelect" name="food_id" class="form-control">
-                  <option value="">Loading menu...</option>
-                </select>
-              </div>
-
-              <!-- Quantity + Add button on one row -->
-              <div class="add-item-row">
-                <div class="form-group" style="margin-bottom:0;">
-                  <label for="itemQty" class="form-label">Quantity</label>
-                  <input
-                    type="number"
-                    id="itemQty"
-                    class="form-control"
-                    value="1"
-                    min="1"
-                    max="50"
-                  />
-                </div>
-
-                <div class="form-group" style="margin-bottom:0;">
-                  <label class="form-label">Unit Price</label>
-                  <input
-                    type="text"
-                    id="unitPriceDisplay"
-                    class="form-control"
-                    value="₱0.00"
-                    readonly
-                    style="background:#f9fafb;color:#1a7a3c;font-weight:700;"
-                  />
-                </div>
-
-                <div style="padding-bottom:0.05rem;">
-                  <button type="button" id="addToCartBtn" class="btn-add-to-cart">
-                    + Add to Cart
-                  </button>
-                </div>
-              </div>
-
-            </div><!-- /add item box -->
-
+            <!-- Section 2: Add Item to Cart removed — menu adds items now -->
           </div><!-- /left column -->
 
           <!-- ════════════════════════════════════════════════

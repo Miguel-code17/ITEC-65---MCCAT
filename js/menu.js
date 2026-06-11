@@ -37,6 +37,74 @@ document.addEventListener('DOMContentLoaded', function () {
   const resultsCount     = document.getElementById('resultsCount');
   const sortSelect       = document.getElementById('sortSelect');
 
+  const CART_STORAGE_KEY = 'mccatCart';
+  const toastContainer = document.querySelector('.toast-container');
+
+  function getCartFromStorage() {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return [];
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.warn('[MCCAT Menu] Invalid cart data in storage, resetting.', e);
+      localStorage.removeItem(CART_STORAGE_KEY);
+      return [];
+    }
+  }
+
+  function saveCartToStorage(cart) {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  }
+
+  function showNotification(message) {
+    if (!toastContainer) {
+      alert(message);
+      return;
+    }
+    const toast = document.createElement('div');
+    toast.className = 'menu-toast';
+    toast.textContent = message;
+    toast.style.cssText = 'position:fixed;bottom:1.5rem;right:1.5rem;z-index:1000;padding:0.9rem 1.2rem;background:#111;color:#fff;border-radius:0.75rem;box-shadow:0 10px 30px rgba(0,0,0,0.18);font-size:0.95rem;';
+    toastContainer.appendChild(toast);
+    setTimeout(() => toast.remove(), 2600);
+  }
+
+  function addToCartFromMenu(foodId) {
+    const food = allFoods.find(item => item.id === foodId);
+    if (!food) {
+      showNotification('Could not add selected item to cart. Please refresh and try again.');
+      return;
+    }
+
+    const cart = getCartFromStorage();
+    const existing = cart.find(item => item.food_id === food.id);
+
+    if (existing) {
+      existing.quantity = Math.min(existing.quantity + 1, 50);
+      existing.line_total = parseFloat((existing.unit_price * existing.quantity).toFixed(2));
+    } else {
+      cart.push({
+        food_id: food.id,
+        food_name: food.name,
+        unit_price: parseFloat(food.price.toFixed(2)),
+        quantity: 1,
+        line_total: parseFloat(food.price.toFixed(2))
+      });
+    }
+
+    saveCartToStorage(cart);
+    showNotification(`Added ${food.name} to cart`);
+  }
+
+  // Handle clicks on Add to Cart buttons rendered inside foodGrid
+  foodGrid.addEventListener('click', function (event) {
+    const btn = event.target.closest('.add-to-cart-menu');
+    if (!btn) return;
+    const id = parseInt(btn.dataset.foodId, 10);
+    if (Number.isInteger(id)) addToCartFromMenu(id);
+  });
+
   if (!foodGrid) return; // Guard — only run on menu page
 
   /* ============================================================
@@ -243,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function () {
       <div class="food-card-image" style="position:relative;">
         ${isFeatured}
         ${isPopular}
-        <img src="${escapeHTML(food.image)}" alt="${escapeHTML(food.name)}" loading="lazy" onerror="this.onerror=null;this.src='images/placeholder.svg'" />
+        ${generateFoodSVG(food)}
       </div>
       <div class="food-card-body">
         <h3 class="food-card-name">${escapeHTML(food.name)}</h3>
@@ -258,9 +326,9 @@ document.addEventListener('DOMContentLoaded', function () {
           <div>
             <div class="food-card-price">₱${food.price.toFixed(2)}</div>
           </div>
-          <a href="order.php?food=${food.id}" class="btn btn-primary btn-sm hover-shine">
-            Order 🛒
-          </a>
+          <button type="button" class="btn btn-primary btn-sm add-to-cart-menu hover-shine" data-food-id="${food.id}">
+            Add to Cart
+          </button>
         </div>
       </div>
     `;
@@ -273,14 +341,36 @@ document.addEventListener('DOMContentLoaded', function () {
      (Replace <img> tags when you have real food images)
      ============================================================ */
 
-  /* ============================================================
-     IMAGE RENDERER
-     Uses the food image path defined in data/foods.json.
-     If the image fails to load, it falls back to a placeholder.
-     ============================================================ */
-  
-  // No extra function body needed here because the image element
-  // is rendered directly in createFoodCard().
+  function generateFoodSVG(food) {
+    const emojiMap = {
+      burgers:  '🍔',
+      chicken:  '🍗',
+      sides:    '🍟',
+      drinks:   '🥤',
+      desserts: '🍦'
+    };
+    const emoji = emojiMap[food.category] || '🍽️';
+    const colors = {
+      burgers:  '#fff3e0',
+      chicken:  '#fce4ec',
+      sides:    '#fffde7',
+      drinks:   '#e3f2fd',
+      desserts: '#fce4ec'
+    };
+    const bg = colors[food.category] || '#e8f5ee';
+
+    return `
+      <div style="
+        width:100%;height:200px;
+        background:${bg};
+        display:flex;align-items:center;justify-content:center;
+        font-size:80px;
+        transition:transform 0.3s ease;
+      " class="food-emoji-display">
+        ${emoji}
+      </div>
+    `;
+  }
 
   /* ============================================================
      STAR RATING GENERATOR

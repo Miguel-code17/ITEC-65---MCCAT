@@ -4,17 +4,84 @@ require_once __DIR__ . '/../connection.php';
 
 echo "=== Seeding Sample Data ===\n";
 
+// Ensure foods exist so order items can reference them
+$foodsFile = __DIR__ . '/../data/foods.json';
+$foods = [];
+if (file_exists($foodsFile)) {
+    $rawFoods = json_decode(file_get_contents($foodsFile), true);
+    if (is_array($rawFoods) && isset($rawFoods['foods']) && is_array($rawFoods['foods'])) {
+        foreach ($rawFoods['foods'] as $food) {
+            if (!empty($food['id']) && !empty($food['name'])) {
+                $foods[] = [
+                    'id' => (int)$food['id'],
+                    'name' => $food['name'],
+                    'description' => $food['description'] ?? null,
+                    'price' => (float)$food['price'],
+                    'category' => $food['category'] ?? null,
+                    'featured' => !empty($food['featured']) ? 1 : 0,
+                    'popular' => !empty($food['popular']) ? 1 : 0,
+                ];
+            }
+        }
+    }
+}
+
+if (empty($foods)) {
+    $foods = [
+        ['id' => 1, 'name' => 'Margherita Pizza', 'description' => null, 'price' => 12.99, 'category' => 'Pizza', 'featured' => 1, 'popular' => 1],
+        ['id' => 2, 'name' => 'Caesar Salad', 'description' => null, 'price' => 8.50, 'category' => 'Salad', 'featured' => 0, 'popular' => 1],
+        ['id' => 3, 'name' => 'Pepperoni Pizza', 'description' => null, 'price' => 14.99, 'category' => 'Pizza', 'featured' => 1, 'popular' => 1],
+        ['id' => 4, 'name' => 'Garlic Bread', 'description' => null, 'price' => 4.99, 'category' => 'Sides', 'featured' => 0, 'popular' => 1],
+        ['id' => 5, 'name' => 'Veggie Pizza', 'description' => null, 'price' => 13.50, 'category' => 'Pizza', 'featured' => 0, 'popular' => 0],
+        ['id' => 6, 'name' => 'Tiramisu', 'description' => null, 'price' => 5.99, 'category' => 'Dessert', 'featured' => 0, 'popular' => 0],
+        ['id' => 7, 'name' => 'Coca Cola', 'description' => null, 'price' => 2.50, 'category' => 'Drinks', 'featured' => 0, 'popular' => 0],
+    ];
+}
+
+foreach ($foods as $f) {
+    $stmtf = $conn->prepare("SELECT id FROM foods WHERE id = ? LIMIT 1");
+    $stmtf->bind_param('i', $f['id']);
+    $stmtf->execute();
+    $resf = $stmtf->get_result();
+    if ($resf->num_rows === 0) {
+        $ins = $conn->prepare("INSERT INTO foods (id, name, description, price, category, featured, popular) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $ins->bind_param('issdsii', $f['id'], $f['name'], $f['description'], $f['price'], $f['category'], $f['featured'], $f['popular']);
+        $ins->execute();
+        $ins->close();
+        echo "✓ Food added: {$f['name']} (ID: {$f['id']})\n";
+    } else {
+        $upd = $conn->prepare("UPDATE foods SET name = ?, description = ?, price = ?, category = ?, featured = ?, popular = ? WHERE id = ?");
+        $upd->bind_param('ssdiiii', $f['name'], $f['description'], $f['price'], $f['category'], $f['featured'], $f['popular'], $f['id']);
+        $upd->execute();
+        $upd->close();
+        echo "→ Food updated: {$f['name']} (ID: {$f['id']})\n";
+    }
+    $stmtf->close();
+}
+
 // Sample users
 $users = [
-    ['fullname' => 'John Doe', 'email' => 'john@example.com', 'phone' => '5551234567'],
-    ['fullname' => 'Jane Smith', 'email' => 'jane@example.com', 'phone' => '5559876543'],
-    ['fullname' => 'Bob Wilson', 'email' => 'bob@example.com', 'phone' => '5555551234'],
+    ['first_name' => 'John', 'last_name' => 'Doe', 'email' => 'john@example.com', 'phone' => '09123456789'],
+    ['first_name' => 'Jane', 'last_name' => 'Smith', 'email' => 'jane@example.com', 'phone' => '09987654321'],
+    ['first_name' => 'Bob', 'last_name' => 'Wilson', 'email' => 'bob@example.com', 'phone' => '09112233445'],
 ];
 
 foreach ($users as $u) {
     $hashed = password_hash('password123', PASSWORD_DEFAULT);
-    $stmt = $conn->prepare("INSERT INTO users (fullname, email, phone, password) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param('ssss', $u['fullname'], $u['email'], $u['phone'], $hashed);
+    // Skip if user already exists
+    $checkUser = $conn->prepare("SELECT id FROM users WHERE email = ? LIMIT 1");
+    $checkUser->bind_param('s', $u['email']);
+    $checkUser->execute();
+    $resUser = $checkUser->get_result();
+    if ($resUser && $resUser->num_rows > 0) {
+        echo "→ User already exists, skipping: {$u['email']}\n";
+        $checkUser->close();
+        continue;
+    }
+    $checkUser->close();
+
+    $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, phone, password) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param('sssss', $u['first_name'], $u['last_name'], $u['email'], $u['phone'], $hashed);
     if ($stmt->execute()) {
         echo "✓ User created: {$u['email']}\n";
     } else {
@@ -112,7 +179,7 @@ foreach ($orders_data as $ord) {
         foreach ($ord['items'] as $item) {
             $line_total = $item['unit_price'] * $item['quantity'];
             $stmt2 = $conn->prepare("INSERT INTO order_items (order_id, food_id, food_name, unit_price, quantity, line_total) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt2->bind_param('iisidi', $order_id, $item['food_id'], $item['food_name'], $item['unit_price'], $item['quantity'], $line_total);
+            $stmt2->bind_param('iisdid', $order_id, $item['food_id'], $item['food_name'], $item['unit_price'], $item['quantity'], $line_total);
             if ($stmt2->execute()) {
                 echo "  ✓ Added {$item['quantity']}x {$item['food_name']}\n";
             } else {

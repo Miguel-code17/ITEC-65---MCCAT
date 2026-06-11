@@ -1,150 +1,96 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Jun 08, 2026 at 04:38 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- Consolidated OLTP + OLAP schema for MCCAT ordering system
+-- Generated: 2026-06-12
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+-- Drop existing DBs (use with caution in production)
+DROP DATABASE IF EXISTS `ordering_dw`;
+DROP DATABASE IF EXISTS `ordering_system`;
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `ordering_system`
---
-
+-- --------------------------------------------------------------------
+-- OLTP: ordering_system
+-- --------------------------------------------------------------------
 CREATE DATABASE IF NOT EXISTS `ordering_system`
-  DEFAULT CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
+  DEFAULT CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 USE `ordering_system`;
 
-
--- --------------------------------------------------------
-
---
--- Table structure for table `orders`
---
-
-CREATE TABLE `orders` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `customer_name` varchar(100) NOT NULL,
-  `phone` varchar(20) NOT NULL,
-  `address` text NOT NULL,
-  `notes` text DEFAULT NULL,
-  `subtotal` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `delivery_fee` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `grand_total` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `status` varchar(30) NOT NULL DEFAULT 'pending',
-  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+-- Users table (customers / admins)
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `first_name` VARCHAR(50) NOT NULL,
+  `last_name` VARCHAR(50) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `phone` VARCHAR(20) DEFAULT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `is_admin` TINYINT(1) NOT NULL DEFAULT 0,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ux_users_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `order_items`
---
-
-CREATE TABLE `order_items` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `order_id` int(10) UNSIGNED NOT NULL,
-  `food_id` int(10) UNSIGNED NOT NULL,
-  `food_name` varchar(150) NOT NULL,
-  `unit_price` decimal(10,2) NOT NULL DEFAULT 0.00,
-  `quantity` int(10) UNSIGNED NOT NULL DEFAULT 1,
-  `line_total` decimal(10,2) NOT NULL DEFAULT 0.00
+-- Foods / menu
+CREATE TABLE IF NOT EXISTS `foods` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(150) NOT NULL,
+  `description` TEXT DEFAULT NULL,
+  `price` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `category` VARCHAR(100) DEFAULT NULL,
+  `featured` TINYINT(1) NOT NULL DEFAULT 0,
+  `popular` TINYINT(1) NOT NULL DEFAULT 0,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
-CREATE TABLE `users` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `fullname` varchar(100) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `phone` varchar(20) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+-- Orders (transactions)
+CREATE TABLE IF NOT EXISTS `orders` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `user_id` INT UNSIGNED DEFAULT NULL,
+  `customer_name` VARCHAR(100) NOT NULL,
+  `phone` VARCHAR(20) NOT NULL,
+  `address` TEXT NOT NULL,
+  `notes` TEXT DEFAULT NULL,
+  `subtotal` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `delivery_fee` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `grand_total` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `status` VARCHAR(30) NOT NULL DEFAULT 'pending',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `idx_orders_created_at` (`created_at`),
+  KEY `idx_orders_status` (`status`),
+  CONSTRAINT `fk_orders_user` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Indexes for dumped tables
---
+-- Order items
+CREATE TABLE IF NOT EXISTS `order_items` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `order_id` INT UNSIGNED NOT NULL,
+  `food_id` INT UNSIGNED NOT NULL,
+  `food_name` VARCHAR(150) NOT NULL,
+  `unit_price` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `quantity` INT UNSIGNED NOT NULL DEFAULT 1,
+  `line_total` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  PRIMARY KEY (`id`),
+  KEY `idx_order_items_order` (`order_id`),
+  KEY `idx_order_items_food` (`food_id`),
+  CONSTRAINT `fk_order_items_order` FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_order_items_food` FOREIGN KEY (`food_id`) REFERENCES `foods`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Indexes for table `orders`
---
-ALTER TABLE `orders`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_orders_created_at` (`created_at`),
-  ADD KEY `idx_orders_status` (`status`),
-  ADD KEY `idx_orders_status_created` (`status`, `created_at`);
+-- Lightweight audit/logs (optional)
+CREATE TABLE IF NOT EXISTS `audit_logs` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `level` VARCHAR(20) NOT NULL,
+  `message` TEXT NOT NULL,
+  `context` JSON DEFAULT NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Indexes for table `order_items`
---
-ALTER TABLE `order_items`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `order_id` (`order_id`),
-  ADD KEY `idx_order_items_food_id` (`food_id`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `orders`
---
-ALTER TABLE `orders`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `order_items`
---
-ALTER TABLE `order_items`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `order_items`
---
-ALTER TABLE `order_items`
-  ADD CONSTRAINT `fk_order_items_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-COMMIT;
--- ============================================================
--- OLAP Data Warehouse (merged)
--- Creates `ordering_dw` database and light-weight aggregate tables
--- ============================================================
-
+-- --------------------------------------------------------------------
+-- OLAP: ordering_dw (aggregates and time-series)
+-- --------------------------------------------------------------------
 CREATE DATABASE IF NOT EXISTS `ordering_dw`
-  DEFAULT CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
+  DEFAULT CHARACTER SET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;
 USE `ordering_dw`;
 
 -- Daily sales summary (one row per date)
@@ -153,6 +99,10 @@ CREATE TABLE IF NOT EXISTS `daily_sales` (
   `total_orders` INT NOT NULL DEFAULT 0,
   `total_revenue` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
   `total_items` INT NOT NULL DEFAULT 0,
+  `avg_order_value` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  `completed_orders` INT NOT NULL DEFAULT 0,
+  `pending_orders` INT NOT NULL DEFAULT 0,
+  `last_updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`sales_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -161,8 +111,11 @@ CREATE TABLE IF NOT EXISTS `product_daily_sales` (
   `sales_date` DATE NOT NULL,
   `food_id` INT UNSIGNED NOT NULL,
   `food_name` VARCHAR(150) NOT NULL,
+  `category` VARCHAR(100) DEFAULT NULL,
   `units_sold` INT NOT NULL DEFAULT 0,
   `revenue` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  `avg_price` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  `last_updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`sales_date`, `food_id`),
   KEY `idx_product_date` (`sales_date`),
   KEY `idx_product_food` (`food_id`)
@@ -173,11 +126,28 @@ CREATE TABLE IF NOT EXISTS `orders_by_hour` (
   `hour_start` DATETIME NOT NULL,
   `order_count` INT NOT NULL DEFAULT 0,
   `revenue` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  `avg_order_value` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  `last_updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`hour_start`),
   KEY `idx_hour` (`hour_start`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Ensure statistics for DW tables
+-- Category performance table
+CREATE TABLE IF NOT EXISTS `category_performance` (
+  `category` VARCHAR(100) NOT NULL,
+  `total_revenue` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  `total_units` INT NOT NULL DEFAULT 0,
+  `order_count` INT NOT NULL DEFAULT 0,
+  `avg_revenue` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  `last_updated` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`category`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Ensure privileges and statistics
 ANALYZE TABLE daily_sales;
 ANALYZE TABLE product_daily_sales;
 ANALYZE TABLE orders_by_hour;
+
+COMMIT;
+
+-- End of consolidated schema

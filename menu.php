@@ -206,7 +206,7 @@ include 'connection.php';
       <!-- Results Count -->
       <div class="results-bar">
         <p>Showing <strong><span id="resultsCount">—</span></strong> items</p>
-        <a href="order.php" class="btn btn-primary btn-sm">🛒 Go to Order Form</a>
+        <a href="order.php" class="btn btn-primary btn-sm">🛒 Cart</a>
       </div>
 
       <!-- Food Grid (rendered by menu.js) -->

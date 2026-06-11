@@ -39,6 +39,25 @@ const FREE_DELIVERY_THRESHOLD = 500;     // pesos — order above this = free de
 let cartItems = [];   // The cart array. Reset on page reload.
 let allFoods  = [];   // Full menu loaded from foods.json (or PHP later).
 
+const CART_STORAGE_KEY = 'mccatCart';
+
+function getCartFromStorage() {
+  const raw = localStorage.getItem(CART_STORAGE_KEY);
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    console.warn('[MCCAT Order] Corrupt cart in storage, clearing.');
+    localStorage.removeItem(CART_STORAGE_KEY);
+    return [];
+  }
+}
+
+function saveCartToStorage(cart) {
+  localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+}
+
 /* ============================================================
    DOM REFERENCES
    Grab every element once at the top — easier to find and change.
@@ -76,28 +95,44 @@ const successOrderId    = document.getElementById('successOrderId');
 
 async function loadMenu() {
   try {
-    // -- FRONTEND (current) ---------------------------------
-    const response = await fetch('data/foods.json');
-
-    // -- PHP BACKEND (future) --------------------------------
-    // const response = await fetch('api/foods.php');
-    // --------------------------------------------------------
+    const response = await fetch('api/foods.php');
 
     if (!response.ok) {
       throw new Error('Network response was not OK: ' + response.status);
     }
 
     const data = await response.json();
-    allFoods = data.foods || [];
+    allFoods = Array.isArray(data.foods) ? data.foods : [];
+
+    if (allFoods.length === 0) {
+      throw new Error('Menu API returned no items. Falling back to static menu.');
+    }
 
     populateFoodSelect(allFoods);
+    clearAlert();
 
   } catch (error) {
-    console.error('[MCCAT] Failed to load menu:', error);
-    showAlert('error', 'Could not load the menu. Please refresh the page and try again.');
+    console.error('[MCCAT] Failed to load menu from API:', error);
 
-    if (foodSelect) {
-      foodSelect.innerHTML = '<option value="">Menu unavailable — please refresh</option>';
+    // Fallback to the static JSON menu if the backend API is not available
+    // or if the API returns an empty menu list.
+    try {
+      const fallback = await fetch('data/foods.json');
+      if (!fallback.ok) {
+        throw new Error('Fallback response was not OK: ' + fallback.status);
+      }
+      const data = await fallback.json();
+      allFoods = Array.isArray(data.foods) ? data.foods : [];
+      populateFoodSelect(allFoods);
+      clearAlert();
+      return;
+    } catch (fallbackError) {
+      console.error('[MCCAT] Fallback menu load failed:', fallbackError);
+      showAlert('error', 'Could not load the menu. Please refresh the page and try again.');
+
+      if (foodSelect) {
+        foodSelect.innerHTML = '<option value="">Menu unavailable — please refresh</option>';
+      }
     }
   }
 }
@@ -231,6 +266,7 @@ function addToCart() {
   unitPriceDisplay.value = '₱0.00';
 
   clearAlert();
+  saveCartToStorage(cartItems);
   renderCart();
 }
 
@@ -242,6 +278,7 @@ function addToCart() {
 
 function removeFromCart(index) {
   cartItems.splice(index, 1);
+  saveCartToStorage(cartItems);
   renderCart();
 }
 
@@ -273,7 +310,13 @@ function renderCart() {
     const tr = document.createElement('tr');
     tr.innerHTML =
       '<td>' + escapeHTML(item.food_name) + '</td>' +
-      '<td style="text-align:center;">' + item.quantity + '</td>' +
+      '<td style="text-align:center;">' +
+        '<div class="qty-controls" style="display:inline-flex;align-items:center;gap:0.4rem;">' +
+          '<button class="btn-qty" onclick="decreaseQty(' + index + ')" aria-label="Decrease">−</button>' +
+          '<span>' + item.quantity + '</span>' +
+          '<button class="btn-qty" onclick="increaseQty(' + index + ')" aria-label="Increase">+</button>' +
+        '</div>' +
+      '</td>' +
       '<td class="price-col">₱' + item.unit_price.toFixed(2) + '</td>' +
       '<td class="price-col">₱' + item.line_total.toFixed(2) + '</td>' +
       '<td class="action-col">' +
@@ -316,20 +359,15 @@ function renderCart() {
 function validateCustomerForm() {
   let isValid = true;
 
-  const nameInput    = document.getElementById('orderName');
   const phoneInput   = document.getElementById('orderPhone');
   const addressInput = document.getElementById('orderAddress');
 
   // Clear any previous error state first
-  [nameInput, phoneInput, addressInput].forEach(function(el) {
+  [phoneInput, addressInput].forEach(function(el) {
     if (el) Validation.clearFieldState(el);
   });
 
-  const nameResult = Validation.validateFullName(nameInput ? nameInput.value : '');
-  if (!nameResult.valid) {
-    Validation.showFieldError(nameInput, nameResult.message);
-    isValid = false;
-  }
+  // Name comes from the authenticated session, no validation needed
 
   const phoneResult = Validation.validatePhone(phoneInput ? phoneInput.value : '');
   if (!phoneResult.valid) {
@@ -381,7 +419,7 @@ function checkout() {
   if (!validateCustomerForm()) {
     showAlert('error', 'Please fill in all required customer fields correctly.');
     // Scroll up so the user sees the errors
-    document.getElementById('orderName').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.getElementById('orderPhone').scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
 
@@ -392,7 +430,7 @@ function checkout() {
 
   const payload = {
     customer: {
-      name:    document.getElementById('orderName').value.trim(),
+      name:    document.getElementById('authenticatedUserName').value.trim(),
       phone:   document.getElementById('orderPhone').value.trim(),
       address: document.getElementById('orderAddress').value.trim(),
       notes:   document.getElementById('orderNotes').value.trim()
@@ -427,7 +465,10 @@ function checkout() {
 
 async function submitOrder(payload) {
   try {
-    const response = await fetch('api/place-order.php', {
+    const apiUrl = new URL('api/place-order.php', window.location.href).href;
+    console.log('[MCCAT] Sending order payload to', apiUrl);
+
+    const response = await fetch(apiUrl, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify(payload)
@@ -435,7 +476,14 @@ async function submitOrder(payload) {
 
     if (!response.ok) {
       const text = await response.text();
-      throw new Error('Server returned status ' + response.status + ' - ' + text);
+      let errorMessage = text;
+      try {
+        const json = JSON.parse(text);
+        if (json && json.message) errorMessage = json.message;
+      } catch (_e) {
+        // ignore invalid JSON
+      }
+      throw new Error('Server returned status ' + response.status + ' - ' + errorMessage);
     }
 
     const result = await response.json();
@@ -450,7 +498,7 @@ async function submitOrder(payload) {
 
   } catch (error) {
     console.error('[MCCAT] Order submission failed:', error);
-    showAlert('error', 'Could not reach the server. Please check your connection and try again.');
+    showAlert('error', error.message || 'Could not reach the server. Please check your connection and try again.');
     checkoutBtn.disabled    = false;
     checkoutBtn.textContent = '🚀 Place Order';
   }
@@ -493,6 +541,8 @@ function onOrderSuccess(orderId) {
 
   // Clear the cart from memory
   cartItems = [];
+  // Remove persisted cart
+  try { localStorage.removeItem(CART_STORAGE_KEY); } catch (e) {}
 
   // Scroll to the top of the page so the user sees the message
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -570,5 +620,29 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // Initial render — shows the empty cart state
+  // Load saved cart from localStorage (if any)
+  cartItems = getCartFromStorage();
   renderCart();
 });
+
+// Quantity helpers exposed globally for inline onclick handlers
+function increaseQty(index) {
+  if (!cartItems[index]) return;
+  if (cartItems[index].quantity >= 50) return;
+  cartItems[index].quantity += 1;
+  cartItems[index].line_total = parseFloat((cartItems[index].unit_price * cartItems[index].quantity).toFixed(2));
+  saveCartToStorage(cartItems);
+  renderCart();
+}
+
+function decreaseQty(index) {
+  if (!cartItems[index]) return;
+  cartItems[index].quantity -= 1;
+  if (cartItems[index].quantity <= 0) {
+    cartItems.splice(index, 1);
+  } else {
+    cartItems[index].line_total = parseFloat((cartItems[index].unit_price * cartItems[index].quantity).toFixed(2));
+  }
+  saveCartToStorage(cartItems);
+  renderCart();
+}

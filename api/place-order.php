@@ -1,9 +1,20 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 header('Content-Type: application/json; charset=utf-8');
+
+function api_log($message) {
+    $logFile = __DIR__ . '/../scripts/order-api.log';
+    file_put_contents($logFile, '[' . date('Y-m-d H:i:s') . '] ' . $message . "\n", FILE_APPEND);
+}
+
+api_log('Request method: ' . $_SERVER['REQUEST_METHOD'] . ' URL: ' . ($_SERVER['REQUEST_URI'] ?? '')); 
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    echo json_encode(['success' => false, 'message' => 'Only POST requests are allowed.']);
+    $payload = ['success' => false, 'message' => 'Only POST requests are allowed.'];
+    api_log('Response: ' . json_encode($payload));
+    echo json_encode($payload);
     exit;
 }
 
@@ -12,7 +23,10 @@ $data = json_decode($rawBody, true);
 
 if (!is_array($data)) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Invalid JSON payload.']);
+    $payload = ['success' => false, 'message' => 'Invalid JSON payload.'];
+    api_log('Invalid JSON payload: ' . $rawBody);
+    api_log('Response: ' . json_encode($payload));
+    echo json_encode($payload);
     exit;
 }
 
@@ -82,7 +96,9 @@ foreach ($cart as $index => $item) {
 
 if (count($errors) > 0) {
     http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Validation failed.', 'errors' => $errors]);
+    $payload = ['success' => false, 'message' => 'Validation failed.', 'errors' => $errors];
+    api_log('Validation failed: ' . json_encode($payload));
+    echo json_encode($payload);
     exit;
 }
 
@@ -120,7 +136,10 @@ $status = 'pending';
 if (!$orderStmt) {
     $conn->rollback();
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Could not prepare order statement.']);
+    $payload = ['success' => false, 'message' => 'Could not prepare order statement.', 'error' => $conn->error];
+    api_log('Order statement prepare failed: ' . $conn->error);
+    api_log('Response: ' . json_encode($payload));
+    echo json_encode($payload);
     exit;
 }
 
@@ -129,7 +148,10 @@ $orderStmt->bind_param('ssssddds', $name, $phone, $address, $notes, $calcSubtota
 if (!$orderStmt->execute()) {
     $conn->rollback();
     http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Could not create order. Please try again later.']);
+    $payload = ['success' => false, 'message' => 'Could not create order. Please try again later.', 'error' => $orderStmt->error];
+    api_log('Order insert failed: ' . $orderStmt->error);
+    api_log('Response: ' . json_encode($payload));
+    echo json_encode($payload);
     exit;
 }
 
@@ -137,6 +159,7 @@ $orderId = $conn->insert_id;
 $itemSql = "INSERT INTO order_items (order_id, food_id, food_name, unit_price, quantity, line_total) VALUES (?, ?, ?, ?, ?, ?);";
 $itemStmt = $conn->prepare($itemSql);
 
+$foodCheck = $conn->prepare('SELECT name, price FROM foods WHERE id = ? LIMIT 1');
 foreach ($cart as $item) {
     $foodId    = (int)$item['food_id'];
     $foodName  = trim($item['food_name']);
@@ -144,15 +167,44 @@ foreach ($cart as $item) {
     $quantity  = (int)$item['quantity'];
     $lineTotal = round((float)$item['line_total'], 2);
 
+    $foodCheck->bind_param('i', $foodId);
+    $foodCheck->execute();
+    $foodRes = $foodCheck->get_result();
+
+    if (!$foodRes || $foodRes->num_rows === 0) {
+        $conn->rollback();
+        http_response_code(400);
+        $payload = ['success' => false, 'message' => 'One or more food items are invalid or unavailable.'];
+        api_log('Invalid food id in cart: ' . $foodId);
+        api_log('Response: ' . json_encode($payload));
+        echo json_encode($payload);
+        exit;
+    }
+
+    $dbFood = $foodRes->fetch_assoc();
+    if ($dbFood['name'] !== $foodName) {
+        // Use the DB name if the client sent a different description
+        $foodName = $dbFood['name'];
+    }
+    if (round((float)$dbFood['price'], 2) !== $unitPrice) {
+        $unitPrice = round((float)$dbFood['price'], 2);
+        $lineTotal = round($unitPrice * $quantity, 2);
+    }
+
     $itemStmt->bind_param('iisdid', $orderId, $foodId, $foodName, $unitPrice, $quantity, $lineTotal);
     if (!$itemStmt->execute()) {
         $conn->rollback();
         http_response_code(500);
-        echo json_encode(['success' => false, 'message' => 'Could not save order items. Please try again later.']);
+        $payload = ['success' => false, 'message' => 'Could not save order items. Please try again later.', 'error' => $itemStmt->error];
+        api_log('Order item insert failed: ' . $itemStmt->error);
+        api_log('Response: ' . json_encode($payload));
+        echo json_encode($payload);
         exit;
     }
 }
+$foodCheck->close();
 
 $conn->commit();
-
-echo json_encode(['success' => true, 'order_id' => $orderId]);
+$payload = ['success' => true, 'order_id' => $orderId];
+api_log('Order created: ' . json_encode($payload));
+echo json_encode($payload);

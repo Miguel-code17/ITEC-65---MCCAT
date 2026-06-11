@@ -19,7 +19,7 @@ function logETL($message) {
 
 // Function to populate daily sales
 function populateDailySales($conn) {
-    $query = "INSERT INTO daily_sales (sales_date, total_orders, total_revenue, total_items, avg_order_value, completed_orders, pending_orders)
+    $query = "INSERT INTO ordering_dw.daily_sales (sales_date, total_orders, total_revenue, total_items, avg_order_value, completed_orders, pending_orders)
     SELECT 
         DATE(o.created_at) as sales_date,
         COUNT(DISTINCT o.id) as total_orders,
@@ -44,9 +44,77 @@ function populateDailySales($conn) {
     return $conn->query($query);
 }
 
+// Ensure DW database and tables exist
+function ensureDWSchema($conn) {
+    $dw = 'ordering_dw';
+
+    // Create DW database
+    if (!$conn->query("CREATE DATABASE IF NOT EXISTS `{$dw}` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")) {
+        logETL('ERROR: Could not create DW database: ' . $conn->error);
+        return false;
+    }
+
+    $queries = [
+        "CREATE TABLE IF NOT EXISTS `{$dw}`.`daily_sales` (
+            sales_date DATE NOT NULL,
+            total_orders INT NOT NULL DEFAULT 0,
+            total_revenue DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+            total_items INT NOT NULL DEFAULT 0,
+            avg_order_value DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+            completed_orders INT NOT NULL DEFAULT 0,
+            pending_orders INT NOT NULL DEFAULT 0,
+            last_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (sales_date)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+        "CREATE TABLE IF NOT EXISTS `{$dw}`.`product_daily_sales` (
+            sales_date DATE NOT NULL,
+            food_id INT UNSIGNED NOT NULL,
+            food_name VARCHAR(150) NOT NULL,
+            category VARCHAR(100) DEFAULT NULL,
+            units_sold INT NOT NULL DEFAULT 0,
+            revenue DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+            avg_price DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+            last_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (sales_date, food_id),
+            KEY idx_product_date (sales_date),
+            KEY idx_product_food (food_id)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+        "CREATE TABLE IF NOT EXISTS `{$dw}`.`orders_by_hour` (
+            hour_start DATETIME NOT NULL,
+            order_count INT NOT NULL DEFAULT 0,
+            revenue DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+            avg_order_value DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+            last_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (hour_start),
+            KEY idx_hour (hour_start)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+        "CREATE TABLE IF NOT EXISTS `{$dw}`.`category_performance` (
+            category VARCHAR(100) NOT NULL,
+            total_revenue DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+            total_units INT NOT NULL DEFAULT 0,
+            order_count INT NOT NULL DEFAULT 0,
+            avg_revenue DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+            last_updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (category)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+    ];
+
+    foreach ($queries as $sql) {
+        if (!$conn->query($sql)) {
+            logETL('ERROR: Could not create DW table: ' . $conn->error);
+            return false;
+        }
+    }
+
+    return true;
+}
+
 // Function to populate product daily sales
 function populateProductDailySales($conn) {
-    $query = "INSERT INTO product_daily_sales (sales_date, food_id, food_name, category, units_sold, revenue, avg_price)
+    $query = "INSERT INTO ordering_dw.product_daily_sales (sales_date, food_id, food_name, category, units_sold, revenue, avg_price)
     SELECT 
         DATE(o.created_at) as sales_date,
         oi.food_id,
@@ -71,9 +139,9 @@ function populateProductDailySales($conn) {
 
 // Function to populate orders by hour
 function populateOrdersByHour($conn) {
-    $query = "INSERT INTO orders_by_hour (hour_start, order_count, revenue, avg_order_value)
+    $query = "INSERT INTO ordering_dw.orders_by_hour (hour_start, order_count, revenue, avg_order_value)
     SELECT 
-        DATE_FORMAT(DATE_SUB(o.created_at, INTERVAL MINUTE(o.created_at) MINUTE, INTERVAL SECOND(o.created_at) SECOND), '%Y-%m-%d %H:00:00') as hour_start,
+        DATE_FORMAT(o.created_at, '%Y-%m-%d %H:00:00') as hour_start,
         COUNT(DISTINCT o.id) as order_count,
         IFNULL(SUM(o.grand_total), 0) as revenue,
         IFNULL(AVG(o.grand_total), 0) as avg_order_value
@@ -91,7 +159,7 @@ function populateOrdersByHour($conn) {
 
 // Function to populate category performance
 function populateCategoryPerformance($conn) {
-    $query = "INSERT INTO category_performance (category, total_revenue, total_units, order_count, avg_revenue)
+    $query = "INSERT INTO ordering_dw.category_performance (category, total_revenue, total_units, order_count, avg_revenue)
     SELECT 
         IFNULL(f.category, 'Uncategorized'),
         IFNULL(SUM(oi.line_total), 0) as total_revenue,
@@ -117,6 +185,8 @@ function populateCategoryPerformance($conn) {
 function runETL($conn) {
     logETL("=== ETL Process Started ===");
     logETL("Database: " . $conn->get_server_info());
+    // Ensure DW schema exists before populating
+    ensureDWSchema($conn);
     
     $results = [];
     

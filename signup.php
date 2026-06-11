@@ -5,14 +5,17 @@ include 'connection.php';
 $signupError = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $fullname = trim($_POST['fullname'] ?? '');
+    $first_name = trim($_POST['first_name'] ?? '');
+    $last_name = trim($_POST['last_name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirm = $_POST['confirm_password'] ?? '';
 
-    if ($fullname === '' || mb_strlen($fullname) < 2 || mb_strlen($fullname) > 100) {
-        $signupError = 'Please enter your full name (2 to 100 characters).';
+    if ($first_name === '' || mb_strlen($first_name) < 2 || mb_strlen($first_name) > 50) {
+        $signupError = 'Please enter your first name (2 to 50 characters).';
+    } elseif ($last_name === '' || mb_strlen($last_name) < 2 || mb_strlen($last_name) > 50) {
+        $signupError = 'Please enter your last name (2 to 50 characters).';
     } elseif ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $signupError = 'Please enter a valid email address.';
     } elseif ($phone === '' || !preg_match('/^(\+63|0)9[0-9]{9}$/', preg_replace('/[\s\-()]/', '', $phone))) {
@@ -31,8 +34,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $signupError = 'Email already exists. Please use a different email.';
         } else {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $conn->prepare('INSERT INTO users (fullname, email, phone, password) VALUES (?, ?, ?, ?)');
-            $stmt->bind_param('ssss', $fullname, $email, $phone, $hashedPassword);
+            $stmt = $conn->prepare('INSERT INTO users (first_name, last_name, email, phone, password) VALUES (?, ?, ?, ?, ?)');
+            $stmt->bind_param('sssss', $first_name, $last_name, $email, $phone, $hashedPassword);
 
             if ($stmt->execute()) {
                 header('Location: login.php?registered=1');
@@ -86,25 +89,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       -->
       <form id="signupForm" method="POST" autocomplete="on">
 
-        <!-- Full Name -->
+        <!-- First Name -->
         <div class="form-group">
-          <label for="signupFullName" class="form-label">
-            Full Name <span class="required">*</span>
+          <label for="signupFirstName" class="form-label">
+            First Name <span class="required">*</span>
           </label>
           <div class="input-group">
             <input
               type="text"
-              id="signupFullName"
-              name="fullname"
+              id="signupFirstName"
+              name="first_name"
               class="form-control"
-              placeholder="e.g. Juan dela Cruz"
+              placeholder="e.g. Juan"
               autocomplete="name"
-              maxlength="100"
+              maxlength="50"
               required
             />
             <span class="input-icon">👤</span>
           </div>
         </div>
+
+          <!-- Last Name -->
+          <div class="form-group">
+            <label for="signupLastName" class="form-label">
+              Last Name <span class="required">*</span>
+            </label>
+            <div class="input-group">
+              <input
+                type="text"
+                id="signupLastName"
+                name="last_name"
+                class="form-control"
+                placeholder="e.g. dela Cruz"
+                autocomplete="family-name"
+                maxlength="50"
+                required
+              />
+              <span class="input-icon">👤</span>
+            </div>
+          </div>
 
         <!-- Email -->
         <div class="form-group">
