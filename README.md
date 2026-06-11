@@ -348,7 +348,6 @@ See [API_DOCUMENTATION.md](API_DOCUMENTATION.md) for complete endpoint reference
 - Miguel Lumactod
 - Gervin Villaflor Signo
 - Charlie Oras
-- Genrev Reyes Tano
 - Joshua Limpioso
 
 **Course:** ITEC 65 – Multimedia Systems  
