@@ -4,59 +4,6 @@
 
 MCCAT is an enterprise-grade food ordering system combining **Online Transaction Processing (OLTP)** for daily operations and **Online Analytical Processing (OLAP)** for business intelligence. Developed as a final project for ITEC 65 at CvSU CCAT, the system demonstrates professional software engineering practices with comprehensive documentation.
 
-**Project Status:** ✅ Production Ready (100/100 Points)
-
----
-
-## Key Features
-
-### Component 1: OLTP & Transaction Management (25 Points) ✅
-- ✓ Normalized database schema (3NF)
-- ✓ ACID-compliant transactions with rollback mechanisms
-- ✓ Foreign key constraints with CASCADE rules
-- ✓ Full CRUD operations on all transactional entities
-- ✓ Multi-table atomic operations
-- ✓ Audit logging of all activities
-- ✓ Input validation and SQL injection prevention
-
-### Component 2: OLAP & Decision-Making Logic (25 Points) ✅
-- ✓ Multidimensional data aggregation queries
-- ✓ Advanced SQL with GROUP BY and window functions
-- ✓ Roll-ups and drill-downs on time dimensions
-- ✓ Decision-making engine with business rules
-- ✓ Automated recommendations based on analytics
-- ✓ Revenue forecasting using statistical analysis
-- ✓ Performance metrics and KPI calculation
-
-### Component 3: Analytics, Reporting & Visualization (20 Points) ✅
-- ✓ Interactive dashboard with Chart.js
-- ✓ Real-time KPI cards (Orders, Revenue, Items, Avg Value)
-- ✓ Multiple chart types (Line, Bar, Horizontal Bar, Doughnut)
-- ✓ PDF report generation with professional formatting
-- ✓ CSV export for spreadsheet analysis
-- ✓ Excel export with formulas
-- ✓ Date range filtering and custom periods
-
-### Component 4: Project Documentation (20 Points) ✅
-- ✓ Technical architecture documentation (this file + TECHNICAL_DOCUMENTATION.md)
-- ✓ Entity-Relationship Diagram in schema
-- ✓ Database design explanations
-- ✓ API endpoint documentation (API_DOCUMENTATION.md)
-- ✓ Installation & setup guide (INSTALLATION_GUIDE.md)
-- ✓ User manual with screenshots (USER_MANUAL.md)
-- ✓ Code comments and inline documentation
-
-### Component 5: Code Quality, Security & Presentation (10 Points) ✅
-- ✓ Clean, modular code architecture
-- ✓ Security utilities (utils.php in security/)
-- ✓ Parameterized queries preventing SQL injection
-- ✓ Bcrypt password hashing (cost 12)
-- ✓ CSRF token protection on forms
-- ✓ Security headers (CSP, X-Frame, XSS protection)
-- ✓ Input validation & sanitization
-- ✓ Session management with timeouts
-- ✓ Rate limiting on sensitive operations
-
 ---
 
 ## Technology Stack
